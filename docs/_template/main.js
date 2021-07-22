@@ -8,6 +8,7 @@ characters = [];
 options = {};
 
 function update() {
-  if (!ticks) {
-  }
+	if (!ticks) {
+		
+	}
 }
