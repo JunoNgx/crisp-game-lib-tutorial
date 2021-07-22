@@ -21,6 +21,9 @@ Here's my attempt to change that. If you are into making videogames and looking 
 * [How to read this tutorial](#how-to-read-this-tutorial)
 * [The tutorial](#the-tutorial)
 	* [Step 00: Setting up](#step-00-setting-up)
+		* [Getting the software](#getting-the-software)
+		* [Getting the library](#getting-the-library)
+		* [Setup the npm package](#setup-the-npm-package)
 	* [Step 01: Basic drawing and update (stars)](#step-01-basic-drawing-and-update-stars)
 	* [Step 02: Input and control (player)](#step-02-input-and-control-player)
 	* [Step 03: Object control, creation, and removal (fBullets)](#step-03-object-control-creation-and-removal-fbullets)
@@ -90,6 +93,7 @@ Alternatively, you can also access these steps from the deployment of this repos
 Additionally, you'll also run into certain notations where I explain certain aspects of making the game:
 * **CrispGameLib quirk**: explanation of the inner workings of the library those are most likely unusual compared to other tools that you take note of.
 * **Javascript feature**: self-explanatorily, this tutorial assumes that are you unfamiliar with Javascript and will briefly explain features or aspects of the language when it's due.
+* **Under the hood**: this is where I will explain shorthand commands and how things inner work behind the scene to give you a bit more knowledge. Hopefully, things will look a bit less like magic to you.
 * **Further reading**: self-explanatorily, there is only so much I can cover in one single tutorial and some matters are best researched in-depth.
 * **Alternative implementation**: many problems or outcomes have no one single definite solution. Occasionally, I will provide an alternative implementation that has some sort of merits you can consider which would hopefully your understanding of the matter.
 * **SWE practice**: while it might be strange to see the term software engineering slung around in beginner-level and simplicity-focused tutorial, but as a software developer myself, I advocate for readable and maintainable codebases. While this is somewhat contradictory to the nature and purpose of this library (games made quick and fast), I believe a healthy balance can be achieved.
@@ -102,6 +106,77 @@ This is where the fun begins and things start happening on your computer 😈.
 
 ## Step 00: Setting up
 
+### Getting the software
+
+Like any development work, before we even get to do anything at all on the game, some software installation and build environment setup is due. This is done only once on each device system that you work on. These are very ubiquitous software for development devices. Go to each URL, follow the installation prompting, and proceed with default settings should get it done.
+
+* [Git](https://git-scm.com/downloads) (can be omitted, but I strongly recommend you not)
+* [NodeJS](https://nodejs.org/en/download/)
+* A terminal of your choice. I personally use [Hyper](https://hyper.is/#installation). You'll also need to enable `bash` [if you're on Windows](https://gist.github.com/coco-napky/404220405435b3d0373e37ec43e54a23).
+* A text editor/IDE of your choice. This tutorial assumes you are using [VSCode](https://code.visualstudio.com/).
+
+----
+**Further reading**: At some point, you should also register a GitHub account if you have not had one and [setup an SSH authentication](https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh), which will be a significant life improvement when you start pushing your code to remote repositories frequently.
+
+----
+
+### Getting the library
+
+Once done, get a distributable version of CrispGameLib, and the simplest way to do so is to clone this repository.
+
+Navigate to the directory where you'd like to work on with the terminal (alternatively, use your operating system's file explorer and opens the terminal there) and enter:
+
+```
+	git clone git@github.com:JunoNgx/crips-game-lib-tutorial.git
+	cd crips-game-lib-tutorial
+```
+
+The second command will navigate the terminal into the newly cloned repository folder.
+
+----
+**Alternatively**: You can just download this repository directly, unzip it, and work from there. Or you can even get it directly from the original repository, which you should do some cleanup in `docs` because of existing games. TODO
+
+----
+
+### Setup the npm package
+
+In case you're not aware, this is an npm package.
+
+----
+**Further reading**: [What is npm? A Node Package Manager Tutorial for Beginners](https://www.freecodecamp.org/news/what-is-npm-a-node-package-manager-tutorial-for-beginners/)
+
+----
+
+To get the package setup and working, run `npm install` from the terminal.
+
+In ways you feel comfortable with, go to the folder `docs`, make a copy of `docs/_template` in the same place and rename it to `chargerush`.
+
+Return to your terminal and enter `npm run watch_games`. You should now no longer be able to type into the console (hint: if you'd like to exit, press `CTRL + C`). Meanwhile, open your browser and access the URL `http://localhost:4000/?chargerush`.
+
+----
+**Under the hood**: if you look into `package.json`, you will notice that `npm run watch_games` is a shorthand for `"light-server -s docs -w \"docs/**/* # # reload\""`, which initialise `light-server`, which is an npm package that allows you to run a static http server with livereloading (which means every time you save, the server will restart and refresh, running your new code immediately. Pretty magic, huh?). You don't need to know everything about `light-server`, but it's useful to understand [what it is](https://www.npmjs.com/package/light-server).
+
+----
+
+If you see a square bright screen against a slightly darker background, with what appears to be score and high score on the top corners, then congratulations, you've done that right 🥂.
+
+![Step 000 - Engine running](images/step_000.png)
+
+In case you are you getting there yet:
+* Check the terminal and make sure that `light-server` is running.
+* Check `docs` folder and make sure that the copied template is correctly named.
+* Check the browser and make sure that you are accessing the `localhost` URL, pointing to the right name of the folder after the question mark.
+
+Once you've got the game running, open VSCode in the root folder of the repository, and open the file `docs/chargerush/main.js`. It's up to your personal preference, but my favourite setup involves halving the screen into VSCode and the browser running the game.
+
+![My setup](images/step_002.png)
+
+Things will get interesting from here.
+
+----
+**Hint**: VSCode also has a built-in terminal. You may either run the server or operate `git` commands from there, saving another terminal window.
+
+----
 
 ## Step 01: Basic drawing and update (stars)
 
