@@ -29,6 +29,9 @@ Here's my attempt to change that. If you are into making videogames and looking 
 	* [Step 06: How audio works](#step-06-how-audio-works)
 	* [Step 07: More complex movements (eBullets)](#step-07-more-complex-movements-ebullets)
 * [Game distribution](#game-distribution)
+* [Feedback and Critique](#feedback-and-critique)
+* [Credits](#credits)
+
 
 # About CrispGameLib
 
@@ -120,3 +123,7 @@ This is where the fun begins and things start happening on your computer 😈.
 
 
 # Game Distribution
+
+# Feedback and Critique
+
+# Credits
