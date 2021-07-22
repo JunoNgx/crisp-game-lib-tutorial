@@ -89,7 +89,9 @@ Alternatively, you can also access these steps from the deployment of this repos
 
 Additionally, you'll also run into certain notations where I explain certain aspects of making the game:
 * **CrispGameLib quirk**: explanation of the inner workings of the library those are most likely unusual compared to other tools that you take note of.
-* **Javascript features**: self-explanatorily, this tutorial assumes that are you unfamiliar with Javascript and will briefly explain features or aspects of the language when it's due.
+* **Javascript feature**: self-explanatorily, this tutorial assumes that are you unfamiliar with Javascript and will briefly explain features or aspects of the language when it's due.
+* **Further reading**: self-explanatorily, there is only so much I can cover in one single tutorial and some matters are best researched in-depth.
+* **Alternative implementation**: many problems or outcomes have no one single definite solution. Occasionally, I will provide an alternative implementation that has some sort of merits you can consider which would hopefully your understanding of the matter.
 * **SWE practice**: while it might be strange to see the term software engineering slung around in beginner-level and simplicity-focused tutorial, but as a software developer myself, I advocate for readable and maintainable codebases. While this is somewhat contradictory to the nature and purpose of this library (games made quick and fast), I believe a healthy balance can be achieved.
 
 Naturally, this tutorial is highly opinionated and based on my personal experiences and understanding. You are highly encouraged to develop your own preferences and stick to them. I also highly welcome feedback and critiques; feel free to contact me in anyway you can regarding those.
