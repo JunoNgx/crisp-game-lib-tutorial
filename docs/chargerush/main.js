@@ -218,9 +218,18 @@ function update() {
     remove(enemies, (e) => {
         e.pos.y += currentEnemySpeed;
         color("black");
-        char("b", e.pos);
+        // Shorthand to check for collision against another specific type
+        // Also draw the sprite
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
 
-        return (e.pos.y > G.HEIGHT);
+        // Check whether to make a small particle explosin at the position
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+        }
+
+        // Also another condition to remove the object
+        return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
     });
 }
 

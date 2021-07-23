@@ -891,12 +891,37 @@ The game now looks much more complete.
 
 ## Step 05: Collision detection
 
-In CrispGameLib, objects' graphic also serve as their hitboxes. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites they are colliding with in the property `isCollidng`. **Further reading**: [Collision example](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors.
+In CrispGameLib, objects' graphic also serve as their hitbox. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites it is colliding with in the property `isColliding`. **Further reading**: [Collision example](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors.
+
+### Step 051: Destroying enemies
 
 Now, let us make enemies destroyable by friendly bullets:
 ```javascript
+    remove(enemies, (e) => {
+        e.pos.y += currentEnemySpeed;
+        color("black");
+        // Shorthand to check for collision against another specific type
+        // Also draw the sprite
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
 
+        // Check whether to make a small particle explosin at the position
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+        }
+
+        // Also another condition to remove the object
+        return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
+    });
 ```
+
+![Destroying enemies](images/step_051.gif)
+
+Here, the `boolean` variable `isCollidingWithFBullets` is used as a shorthand to check whether a sprite character of type `b` is colliding with any of the yellow rectangles (which are representing a friendly bullet). This initialisation also causes the `char` `b` to be drawn onscreen, even when it's not explicitly used for drawing purpose.
+
+`isCollidingWithFBullets` is then used to check whether there should be a small particle explosion at the location of the `Enemy` object and whether this `Enemy` object should be removed from the container.
+
+### Step 052: Also destroying bullets
 
 ## Step 06: How audio works
 
