@@ -774,9 +774,129 @@ Step 03 conclusion: [deployment]() / [code]() TODO
 
 ## Step 04: Mechanic control (enemies)
 
+Let's get some enemies in.
 
-## Step 05: Collision detection and resolution
+### Step 041: The formation
 
+Before we start doing anything, we need to take a look at what we're going to do. [Here's the original game again][cro], if you need a refresher.
+
+While it's not exactly obvious, but the enemies are spawned in a very particular awy:
+* Enemies are evenly spreaded vertically.
+* Enemies' horizontal positions are randomized.
+* All enemies in the same wave have the same speed.
+* Enemies' score value is increased by 10 per wave.
+
+(And one reason I am certain about all of that, is because I looked at the [source code](http://abagames.sakura.ne.jp/html5/cr/main.coffee) 😎).
+
+### Step 042: Processing the Enemy
+
+To proceed, let's declare some types:
+
+```javascript
+/**
+ * @typedef {{
+ * pos: Vector
+ * }} Enemy
+ */
+
+/**
+ * @type { Enemy [] }
+ */
+let enemies;
+
+/**
+ * @type { number }
+ */
+let currentEnemySpeed;
+
+/**
+ * @type { number }
+ */
+let waveCount;
+```
+
+Type `Enemy` apparently should have their own independent position. However, you'd notice that I have a separate variable `currentEnemySpeed`, which is because enemies that appear onscreen at the same time all have the same speed, so it would be slightly unoptimal to store the same value multiple times. In the grand scheme of the processing resources available, the cost of these variables are tiny, but this is to give you an idea and a taste of optimisation.
+
+To proceed, let's get out the rest of what we need:
+
+```javascript
+
+// New sprite
+characters = [
+`
+  ll
+  ll
+ccllcc
+ccllcc
+ccllcc
+cc  cc
+`,`
+rr  rr
+rrrrrr
+rrpprr
+rrrrrr
+  rr
+  rr
+`,
+];
+
+// New game design variables
+const G = {
+    ENEMY_MIN_BASE_SPEED: 1.0,
+    ENEMY_MAX_BASE_SPEED: 2.0
+};
+
+    // Initalise the values:
+    enemies = [];
+
+    waveCount = 0;
+    currentEnemySpeed = 0;
+
+    // Another update loop
+    // This time, with remove()
+    remove(enemies, (e) => {
+        e.pos.y += currentEnemySpeed;
+        color("black");
+        char("b", e.pos);
+
+        return (e.pos.y > G.HEIGHT);
+    });
+```
+
+However, we are not seeing anything because we haven't spawned them.
+
+### Step 043: Spawning
+
+We'd spawn them the simple way: as long as there is no enemy around. Add this block before processing the `stars` and right after the initialisation:
+
+```javascript
+    if (enemies.length === 0) {
+        currentEnemySpeed =
+            rnd(G.ENEMY_MIN_BASE_SPEED, G.ENEMY_MAX_BASE_SPEED) * difficulty;
+        for (let i = 0; i < 9; i++) {
+            const posX = rnd(0, G.WIDTH);
+            const posY = -rnd(i * G.HEIGHT * 0.1);
+            enemies.push({ pos: vec(posX, posY) })
+        }
+    }
+```
+
+Things to note:
+* **CrispGameLib feature**: there is a built-in variable called `difficulty`, which starts from `1`, and is progressively increased by `1` for every minute passed, slowly and gradually. If you'd like to see this for yourself, try printing this either onscreen (`text(difficulty.toString(), 3, 10);`) or to the web browser console  (`console.log(difficulty);`). This variable here is used to modify the enemy speed, which will make the game more difficulty as time passes and the value of `difficulty` increases.
+* I'm not using `times()` here because we need to access the looping variable `i`, hence this is an old-fashioned standard `for loop`.
+
+![Spawning enemies](images/step_043.gif)
+
+The game now looks much more complete.
+
+## Step 05: Collision detection
+
+In CrispGameLib, objects' graphic also serve as their hitboxes. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites they are colliding with in the property `isCollidng`. **Further reading**: [Collision example](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors.
+
+Now, let us make enemies destroyable by friendly bullets:
+```javascript
+
+```
 
 ## Step 06: How audio works
 
