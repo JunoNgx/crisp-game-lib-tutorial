@@ -145,11 +145,21 @@ let waveCount;
 function update() {
     // The init function running at startup
 	if (!ticks) {
+        // A CrispGameLib function
+        // First argument (number): number of times to run the second argument
+        // Second argument (function): a function that returns an object. This
+        // object is then added to an array. This array will eventually be
+        // returned as output of the times() function.
 		stars = times(20, () => {
+            // Random number generator function
+            // rnd( min, max )
             const posX = rnd(0, G.WIDTH);
             const posY = rnd(0, G.HEIGHT);
+            // An object of type Star with appropriate properties
             return {
+                // Creates a Vector
                 pos: vec(posX, posY),
+                // More RNG
                 speed: rnd(G.STAR_SPEED_MIN, G.STAR_SPEED_MAX)
             };
         });
@@ -185,27 +195,39 @@ function update() {
 
     // Update for Star
     stars.forEach((s) => {
+        // Move the star downwards
         s.pos.y += s.speed;
+        // Bring the star back to top once it's past the bottom of the screen
         if (s.pos.y > G.HEIGHT) s.pos.y = 0;
+
+        // Choose a color to draw
         color("light_black");
+        // Draw the star as a square of size 1
         box(s.pos, 1);
     });
 
     // Updating and drawing the player
     player.pos = vec(input.pos.x, input.pos.y);
     player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
+    // Cooling down for the next shot
     player.firingCooldown--;
+    // Time to fire the next shot
     if (player.firingCooldown <= 0) {
+        // Get the side from which the bullet is fired
         const offset = (player.isFiringLeft)
             ? -G.PLAYER_GUN_OFFSET
             : G.PLAYER_GUN_OFFSET;
+        // Create the bullet
         fBullets.push({
             pos: vec(player.pos.x + offset, player.pos.y)
         });
+        // Reset the firing cooldown
         player.firingCooldown = G.PLAYER_FIRE_RATE;
+        // Switch the side of the firing gun by flipping the boolean value
         player.isFiringLeft = !player.isFiringLeft;
 
         color("yellow");
+        // Generate particles
         particle(
             player.pos.x + offset, // x coordinate
             player.pos.y, // y coordinate
@@ -218,12 +240,16 @@ function update() {
     color ("black");
     char("a", player.pos);
 
+    // text(fBullets.length.toString(), 3, 10);
+
+    // Updating and drawing bullets
     fBullets.forEach((fb) => {
         fb.pos.y -= G.FBULLET_SPEED;
+
+        // Drawing fBullets for the first time, allowing interaction from enemies
         color("yellow");
         box(fb.pos, 2);
     });
-
 
     remove(enemies, (e) => {
         e.pos.y += currentEnemySpeed;
@@ -239,6 +265,9 @@ function update() {
         }
 
         color("black");
+        // Interaction from enemies to fBullets
+        // Shorthand to check for collision against another specific type
+        // Also draw the sprits
         const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
         const isCollidingWithPlayer = char("b", e.pos).isColliding.char.a;
         if (isCollidingWithPlayer) {
@@ -253,31 +282,39 @@ function update() {
             addScore(10 * waveCount, e.pos);
         }
         
+        // Also another condition to remove the object
         return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
     });
 
     remove(fBullets, (fb) => {
+        // Interaction from fBullets to enemies, after enemies have been drawn
         color("yellow");
         const isCollidingWithEnemies = box(fb.pos, 2).isColliding.char.b;
         return (isCollidingWithEnemies || fb.pos.y < 0);
     });
 
     remove(eBullets, (eb) => {
+        // Old-fashioned trigonometry to find out the velocity on each axis
         eb.pos.x += G.EBULLET_SPEED * Math.cos(eb.angle);
         eb.pos.y += G.EBULLET_SPEED * Math.sin(eb.angle);
+        // The bullet also rotates around itself
         eb.rotation += G.EBULLET_ROTATION_SPD;
 
         color("red");
         const isCollidingWithPlayer
             = char("c", eb.pos, {rotation: eb.rotation}).isColliding.char.a;
+
         if (isCollidingWithPlayer) {
+            // End the game
             end();
             play("powerUp");
         }
+
         const isCollidingWithFBullets
             = char("c", eb.pos, {rotation: eb.rotation}).isColliding.rect.yellow;
         if (isCollidingWithFBullets) addScore(1, eb.pos);
         
+        // If eBullet is not onscreen, remove it
         return (!eb.pos.isInRect(0, 0, G.WIDTH, G.HEIGHT));
     });
 }

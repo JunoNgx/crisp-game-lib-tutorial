@@ -1265,6 +1265,65 @@ And congrats, the game is now in a shippable state 😁.
 
 Step 07 conclusion: [deployment]() / [code]() TODO
 
+## Step 08: Extra goodies
+
+While this is all great and nice, I'd like to give you an even cooler version of the game.
+
+### Step 081: Replay
+
+```javascript
+options = {
+    isReplayEnabled: true
+}
+```
+
+By enabling an option with this one single line, the title screen will now automatically replay your last session. Your game is now 10x cooler without you having to do anything.
+
+![Replay](images/step_081.gif)
+
+### Step 082: Themes
+
+Excerpt from documentation:
+```javascript
+//   theme?: "simple" | "pixel" | "shape" | "shapeDark" | "crt" | "dark";
+//    // Select the appearance theme.
+```
+
+By adding another option `theme`, you'll get access to a set of filters that pretty much transforms your game visually.
+
+```javascript
+options = {
+    theme: "dark"
+}
+```
+![Replay](images/step_082.gif)
+![Replay](images/step_082b.gif)
+
+However, it should be strongly emphasized that this is **not an option to be used recklessly**. `simple` and `dark` are the only two guaranteed safe options. Everything else is extremely resource hungry, and not all games are suitable for these themes (like this, for example). You are not going to have a very good performance or experience otherwise.
+
+This goes doubly so, if you have any intention of using the next feature.
+
+### Step 083: GIF capturing
+
+While LiceCap is always there, it is pretty cool to have a built-in tool to natively record gameplay gifs.
+
+```javascript
+options = {
+    isCapturing: true,
+    isCapturingGameCanvasOnly: true,
+    captureCanvasScale: 2
+}
+```
+With at least the first option enabled, pressing the key `C` on your keyboard while running the game will record the last 5 seconds of footage, which will then be inserted into the HTML page the game is running on (you can then retrieve the gif file from there).
+
+By enabling the first option only, you'll get a relatively small GIF with horizontal margins which is optimized for sharing on Twitter. 
+
+![Replay](images/step_083a.gif)
+
+Enabling `isCapturingGameCanvasOnly` will allow you to capture only the game canvas, in which case, you can use the third option `captureCanvasScale` to adjust the output size.
+
+Needless to say, the smaller the output, the faster it works. It should also be noted that any theme that isn't `simple` and `dark` is not going to play very well with these two options, on top of their potential performance issue.
+
 # Game Distribution
 
 # Feedback and Critique
