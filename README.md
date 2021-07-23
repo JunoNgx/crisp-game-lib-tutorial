@@ -79,7 +79,7 @@ A game speaks a million words, so do check out [Kenta's works][aba-asa] and [min
 
 # The goal
 
-This is a project driven tutorial. We are going to learn gamedev by making a very particular game: [Charge Rush RE][crr], which is my own remake of the mgl.coffee-powered [CHARGE RUSH][cro] by Kenta himself. This is a game I have massively enjoyed for many years over, which also has a great balance of simplicity, complexity, and depth, in from both gameplay and gamedev perspectives. These are great properties for a learning project. The final game does have some small deviations, which you can take a look at [here]().
+This is a project driven tutorial. We are going to learn gamedev by making a very particular game: [Charge Rush RE][crr], which is my own remake of the mgl.coffee-powered [CHARGE RUSH][cro] by Kenta himself. This is a game I have massively enjoyed for many years over, which also has a great balance of simplicity, complexity, and depth, in from both gameplay and gamedev perspectives. These are great properties for a learning project. The final game does have some small deviations, which you can take a look at [here](https://junongx.github.io/crisp-game-lib-tutorial/?chargerush).
 
 At the end of the tutorial, besides having your own version of Charge Rush running and working, hopefully you'll have a good idea of:
 * The code structure and thinking process to create a game with CrispGameLib.
