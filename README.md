@@ -921,7 +921,66 @@ Here, the `boolean` variable `isCollidingWithFBullets` is used as a shorthand to
 
 `isCollidingWithFBullets` is then used to check whether there should be a small particle explosion at the location of the `Enemy` object and whether this `Enemy` object should be removed from the container.
 
-### Step 052: Also destroying bullets
+### Step 052: Two-way interaction
+
+While we have implemented a simple of form collision detection, having a two-way collision, in which both the bullet and the target are destroyed, is a slightly more complicated matter.
+
+Let us try:
+
+```javascript
+    remove(fBullets, (fb) => {
+        const isCollidingWithEnemies = box(fb.pos, 2).isColliding.char.b;
+        return (isCollidingWithEnemies || fb.pos.y < 0);
+    });
+```
+
+While this syntatically and logically correct, you will notice this does not work. The enemies are destroyed, but not friendly bullets. The question is why?
+
+Consider this: everything we have written happened in one single frame, which occurs 60 times in a second. By examining the location of `remove(fBullets, (fb) => {});` in the chronological logic of the `update()` frame, you will noticed that by the a `fBullet` attempts to detect another `char.b`, no `char.b` has been drawn for that frame.
+
+The solution: let `fBullets` react to a collision only after `Enemies` have been drawn:
+
+```javascript
+    // Updating and drawing bullets
+    fBullets.forEach((fb) => {
+        fb.pos.y -= G.FBULLET_SPEED;
+
+        // Drawing fBullets for the first time, allowing interaction from enemies
+        color("yellow");
+        box(fb.pos, 2);
+    });
+
+    remove(enemies, (e) => {
+        e.pos.y += currentEnemySpeed;
+        color("black");
+        // Interaction from enemies to fBullets
+        // Shorthand to check for collision against another specific type
+        // Also draw the sprits
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
+        
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+        }
+        
+        // Also another condition to remove the object
+        return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
+    });
+
+    remove(fBullets, (fb) => {
+        // Interaction from fBullets to enemies, after enemies have been drawn
+        color("yellow");
+        const isCollidingWithEnemies = box(fb.pos, 2).isColliding.char.b;
+        return (isCollidingWithEnemies || fb.pos.y < 0);
+    });
+
+```
+
+![Two-way collision](images/step_052.gif)
+
+You will also notice that `fBullets` are drawn twice: the first time to allow themselves to be interacted with from `enemies`, and the second time, to interact with `enemies` from themselves.
+
+This is a CrispGameLib quirk, while this does sound mind-boggling, it is not as complicated as it looks. The takeaway is: always make sure that the two involved colliding sprites are already drawn, which means occasionally drawing some of them twice.
 
 ## Step 06: How audio works
 
