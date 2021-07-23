@@ -158,7 +158,7 @@ Navigate to the directory where you'd like to work on with the terminal (alterna
 The second command will navigate the terminal into the newly cloned repository folder.
 
 ----
-**Alternatively**: You can just download this repository directly, unzip it, and work from there. Or you can even get it directly from the original repository, which you should do some cleanup in `docs` because of existing games. TODO
+**Alternatively**: You can just [download this repository directly](https://github.com/JunoNgx/crisp-game-lib-tutorial/archive/refs/heads/master.zip), unzip it, and work from there. Or you can even get it directly from the original repository, after which you should do some cleanup in `docs` because of existing games.
 
 ----
 
@@ -204,7 +204,7 @@ Things will get interesting from here.
 
 ----
 
-Step 00 conclusion: [deployment]() / [code]() TODO
+Step 00 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_00) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_00/main.js).
 
 ## Step 01: Basic drawing and update (stars)
 
@@ -428,7 +428,7 @@ Pretty cool, yeah?
 
 ----
 
-Step 01 conclusion: [deployment]() / [code]() TODO
+Step 01 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_01) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_01/main.js).
 
 ## Step 02: Input and control (player)
 
@@ -572,7 +572,7 @@ Notice that the `l` and `c` are actually short forms of the color `black` and `c
 
 ----
 
-Step 02 conclusion: [deployment]() / [code]() TODO
+Step 02 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_02) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_02/main.js).
 
 ## Step 03: Object control, creation, and removal (fBullets)
 
@@ -791,7 +791,7 @@ function particle(
 ```
 Do take note of my use of `PI` to achieve a 90 degree angle, and the alternative use of `Vector` instead of separated `x` and `y` coordinates, a frequent recurring motif in GameCrispLib API.
 
-Step 03 conclusion: [deployment]() / [code]() TODO
+Step 03 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_03) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_03/main.js).
 
 ## Step 04: Mechanic control (enemies)
 
@@ -910,7 +910,7 @@ Things to note:
 
 The game now looks much more complete.
 
-Step 04 conclusion: [deployment]() / [code]() TODO
+Step 04 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_04) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_04/main.js).
 
 ## Step 05: Collision detection
 
@@ -1003,7 +1003,7 @@ You will also notice that `fBullets` are drawn twice: the first time to allow th
 
 This is a **CrispGameLib quirk**, while this does sound mind-boggling at first, it is not as complicated as it looks. The takeaway is: always make sure that the two colliding sprites are already drawn, which means occasionally drawing some of them more than once.
 
-Step 05 conclusion: [deployment]() / [code]() TODO
+Step 05 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_05) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_05/main.js).
 ## Step 06: How audio works
 
 ### Step 061: The basic way
@@ -1068,7 +1068,7 @@ The bottom line is, CrispGameLib uses a combination of your assigned random `see
 
 Of course, without saying, it comes with a major downside. It means that you have pretty much almost no control at all over audio, and if you are looking to fine tune every single piece of audio, CrispGameLib can't give you that without some major modification to the engine.
 
-Step 06 conclusion: [deployment]() / [code]() TODO
+Step 06 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_06) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_06/main.js).
 
 ## Step 07: More complex movements (eBullets)
 
@@ -1282,7 +1282,7 @@ And congratulations, the game is now in a very playable state 🎉.
 
 ![Scoring](images/step_072.gif)
 
-Step 07 conclusion: [deployment]() / [code]() TODO
+Step 07 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_07) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_07/main.js).
 
 ## Step 08: Extra goodies
 
@@ -1345,7 +1345,7 @@ Needless to say, the smaller the output, the faster it works. It should also be 
 
 So there you are, congratulations. Hopefully you have now acquired a good amount of knowledge of CrispGameLib and ready take on your own ideas.
 
-Step 08 conclusion: [deployment]() / [code]() TODO
+Step 08 conclusion: [deployment](https://junongx.github.io/crisp-game-lib-tutorial/?step_08) / [code](https://raw.githubusercontent.com/JunoNgx/crisp-game-lib-tutorial/master/docs/step_08/main.js).
 
 # Game Distribution
 
@@ -1353,7 +1353,7 @@ The most simple way to distribute your games made with CrispGameLib is using Git
 
 If you already have a forked repository of CrispGameLib:
 * Access the Settings/Pages for the forked repository.
-* Change Source folder to `/docs` in the dropdown menu.
+* Choose the appropriate branch (most likely `master`) and change the source folder to `/docs` from the dropdown menu.
 * Access the game at `https://<your-username>.github.io/<repository-name>/?<game-folder-name>`.
 
 At this point, you may simply make a copy of `_template`, rename it, and start working on your own games. Your new commits and changes, once pushed to remote, will be instantly reflected on your GitHub Page. Do create branches if you have need to.
