@@ -889,6 +889,8 @@ Things to note:
 
 The game now looks much more complete.
 
+Step 04 conclusion: [deployment]() / [code]() TODO
+
 ## Step 05: Collision detection
 
 In CrispGameLib, objects' graphic also serve as their hitbox. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites it is colliding with in the property `isColliding`. **Further reading**: [Collision example](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors.
@@ -982,6 +984,7 @@ You will also notice that `fBullets` are drawn twice: the first time to allow th
 
 This is a CrispGameLib quirk, while this does sound mind-boggling, it is not as complicated as it looks. The takeaway is: always make sure that the two involved colliding sprites are already drawn, which means occasionally drawing some of them twice.
 
+Step 05 conclusion: [deployment]() / [code]() TODO
 ## Step 06: How audio works
 
 ### Step 061: The basic way
@@ -1045,6 +1048,8 @@ Destroy enemies.
 The bottom line is, CrispGameLib uses a combination of your assigned random `seed` and the content of your `description` to generate a particular sets of audio for your game. This means you are probably putting minimum work while still achieving a relatively unique audio experience for each game.
 
 Of course, without saying, it comes with a major downside. It means that you have pretty much almost no control at all over audio, and if you are looking to fine tune every single piece of audio, CrispGameLib can't give you that without some major modification to the engine.
+
+Step 06 conclusion: [deployment]() / [code]() TODO
 
 ## Step 07: More complex movements (eBullets)
 
@@ -1178,7 +1183,8 @@ Also, update `eBullets` and handle the collision with player.
         if (isCollidingWithPlayer) {
             // End the game
             end();
-            play("lucky");
+            // Sarcasm; also, unintedned audio that sounds good in actual gameplay
+            play("powerUp"); 
         }
         
         // If eBullet is not onscreen, remove it
@@ -1191,7 +1197,73 @@ While this looks like a lot to comprehend, most of these are no longer new at th
 * The function `end()` which ends the game, automatically putting the game into an ending state and returning to the title screen.
 * `Vector.isInRect(topLeftX, topLeftY, length, width)`, self-exlanatorily, checks whether the coordinate is within a particular rectangle. Here it is used to detect whether the bullet is within the game screen.
 
+![Firing enemy bullets](images/step_071.gif)
+
+At this point, it's fair that `enemies` are also able to destroy the `player`, too.
+
+```javascript
+        const isCollidingWithPlayer = char("b", e.pos).isColliding.char.a;
+        if (isCollidingWithPlayer) {
+            end();
+            play("powerUp"); // Un
+        }
+```
+
 ### Step 072: Scoring
+
+Here's the part that makes the player keeps playing and coming back. It is however, surprisingly simple.
+
+Each destroyed enemy should provide the player with a score of multiplication of 10, based on the `waveCount`. Any contact between `eBullet` and `fBullet` will yield a small amount of scores, too.
+
+First thing first, we need to keep a good track of `waveCount`.
+
+```javascript
+if (!ticks) {
+    waveCount = 0;
+}
+```
+```javascript
+    if (enemies.length === 0) {
+        currentEnemySpeed =
+            rnd(G.ENEMY_MIN_BASE_SPEED, G.ENEMY_MAX_BASE_SPEED) * difficulty;
+        for (let i = 0; i < 9; i++) {
+            const posX = rnd(0, G.WIDTH);
+            const posY = -rnd(i * G.HEIGHT * 0.1);
+            enemies.push({
+                pos: vec(posX, posY),
+                firingCooldown: G.ENEMY_FIRE_RATE 
+            });
+        }
+
+        waveCount++; // Increase the tracking variable by one
+    }
+```
+
+Upon collision:
+```javascript
+    remove(enemies, (e) => {
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+            play("explosion");
+            addScore(10 * waveCount, e.pos);
+        }
+    });
+```
+```javascript
+    remove(eBullets, (eb) => {
+        const isCollidingWithFBullets
+            = char("c", eb.pos, {rotation: eb.rotation}).isColliding.rect.yellow;
+        if (isCollidingWithFBullets) addScore(1, eb.pos);
+    });
+```
+
+And congrats, the game is now in a shippable state 😁.
+
+![Scoring](images/step_072.gif)
+
+Step 07 conclusion: [deployment]() / [code]() TODO
 
 # Game Distribution
 
