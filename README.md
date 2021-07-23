@@ -472,6 +472,82 @@ You will notice that `Vector.clamp(minX, maxX, minY, maxY)` is very similar to `
 
 ### Step 023: Custom sprite
 
+A square, however, is not very appealing or interesting. This is where I show you how to use custom sprite characters.
+
+Just below the `description` declaration, notice that there is an empty array `character = [];`. Time to use it. Try populate it with something. Do note the use of backticks for template literal and how there was no indentation. VSCode is going to automatically insert indentations among other things, so make sure you paste in correctly and manually fix any incorrect whitespaces:
+
+```javascript
+characters = [
+`
+  ll
+  ll
+ccllcc
+ccllcc
+ccllcc
+cc  cc
+`
+];
+```
+
+Now, replace the drawing line with something else:
+```javascript
+    color("cyan");
+    // box(player.pos, 4);
+    char("a", player.pos);
+```
+
+![New sprite](images/step_023.gif)
+
+Notice that the shape has been changed to the new array element we have just populated with, though the color remains the same. Now try something else by changing the color to `black`:
+
+```javascript
+    // color("cyan");
+    color ("black");
+    // box(player.pos, 4);
+    char("a", player.pos);
+```
+
+![Original color](images/step_023b.gif)
+
+Mind-blowing, eh?
+
+In order to explain this weird phenomenon you've just witnessed, I need to show you an excerpt of the documentation, regarding the color list:
+
+```javascript
+// Define pixel arts of characters.
+// Each letter represents a pixel color.
+// (l: black, r: red, g: green, b: blue
+//  y: yellow, p: purple, c: cyan
+//  L: light_black, R: light_red, G: light_green, B: light_blue
+//  Y: light_yellow, P: light_purple, C: light_cyan)
+// Characters are assigned from 'a'.
+// 'char("a", 0, 0);' draws the character
+// defined by the first element of the array.
+```
+And look at this again:
+
+```javascript
+characters = [
+`
+  ll
+  ll
+ccllcc
+ccllcc
+ccllcc
+cc  cc
+`
+];
+```
+
+Notice that the `l` and `c` are actually short forms of the color `black` and `cyan`. By changing these characters to other valid characters that also represent colors, you would change the color of some pixels in this sprite. The excerpt also explains the function `char()`, in which `a` is represented by the first element in the array `characters`. Also, by setting the drawing color to `color("black")`, the engine will draw the sprite with the originally colors, instead of an overlay.
+
+----
+**For your experimentation**: Using the available colors, make your own sprite that represents the player's ship by modifying the first element in `characters`. Do notice that you are limited only to the size 6x6.
+
+----
+
+Step 02 conclusion: [deployment]() / [code]() TODO
+
 ## Step 03: Object control, creation, and removal (fBullets)
 
 
