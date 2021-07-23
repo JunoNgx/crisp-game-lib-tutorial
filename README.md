@@ -15,28 +15,50 @@ Here's my attempt to change that. If you are into making videogames and looking 
 
 # Table of content
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-
-* [About CrispGameLib](#about-crispgamelib)
-* [The goal](#the-goal)
-* [What you need](#what-you-need)
-* [How to read this tutorial](#how-to-read-this-tutorial)
-* [The tutorial](#the-tutorial)
-	* [Step 00: Setting up](#step-00-setting-up)
-		* [Step 001: Getting the software](#step-001-getting-the-software)
-		* [Step 002: Getting the library](#step-002-getting-the-library)
-		* [Setup the npm package](#setup-the-npm-package)
-	* [Step 01: Basic drawing and update (stars)](#step-01-basic-drawing-and-update-stars)
-	* [Step 02: Input and control (player)](#step-02-input-and-control-player)
-	* [Step 03: Object control, creation, and removal (fBullets)](#step-03-object-control-creation-and-removal-fbullets)
-	* [Step 04: Mechanic control (enemies)](#step-04-mechanic-control-enemies)
-	* [Step 05: Collision detection and resolution](#step-05-collision-detection-and-resolution)
-	* [Step 06: How audio works](#step-06-how-audio-works)
-	* [Step 07: More complex movements (eBullets)](#step-07-more-complex-movements-ebullets)
-* [Game distribution](#game-distribution)
-* [Feedback and Critique](#feedback-and-critique)
-* [Credits](#credits)
-
+- [About CrispGameLib](#about-crispgamelib)
+- [The goal](#the-goal)
+- [What you need](#what-you-need)
+- [How to read this tutorial](#how-to-read-this-tutorial)
+- [The tutorial](#the-tutorial)
+  - [Step 00: Setting up](#step-00-setting-up)
+    - [Step 001: Getting the software](#step-001-getting-the-software)
+    - [Step 002: Getting the library](#step-002-getting-the-library)
+    - [Step 003: Setup the npm package](#step-003-setup-the-npm-package)
+  - [Step 01: Basic drawing and update (stars)](#step-01-basic-drawing-and-update-stars)
+    - [Step 011: Renaming title](#step-011-renaming-title)
+    - [Step 012: Create the tuning data container and change the size](#step-012-create-the-tuning-data-container-and-change-the-size)
+    - [Step 013: Container variable and JSDoc](#step-013-container-variable-and-jsdoc)
+    - [Step 014: The initialising block](#step-014-the-initialising-block)
+    - [Step 015: The update loop](#step-015-the-update-loop)
+  - [Step 02: Input and control (player)](#step-02-input-and-control-player)
+    - [Step 021: Another type](#step-021-another-type)
+    - [Step 022: Input handling](#step-022-input-handling)
+    - [Step 023: Custom sprite](#step-023-custom-sprite)
+  - [Step 03: Object control, creation, and removal (fBullets)](#step-03-object-control-creation-and-removal-fbullets)
+    - [Step 031: Firing bullets](#step-031-firing-bullets)
+    - [Step 032: Object management and removal](#step-032-object-management-and-removal)
+    - [Step 033: Dual barrels](#step-033-dual-barrels)
+    - [Step 034: Muzzleflash and particles](#step-034-muzzleflash-and-particles)
+  - [Step 04: Mechanic control (enemies)](#step-04-mechanic-control-enemies)
+    - [Step 041: The formation](#step-041-the-formation)
+    - [Step 042: Processing the Enemy](#step-042-processing-the-enemy)
+    - [Step 043: Spawning](#step-043-spawning)
+  - [Step 05: Collision detection](#step-05-collision-detection)
+    - [Step 051: Destroying enemies](#step-051-destroying-enemies)
+    - [Step 052: Two-way interaction](#step-052-two-way-interaction)
+  - [Step 06: How audio works](#step-06-how-audio-works)
+    - [Step 061: The basic way](#step-061-the-basic-way)
+    - [Step 062: Infinite sound](#step-062-infinite-sound)
+  - [Step 07: More complex movements (eBullets)](#step-07-more-complex-movements-ebullets)
+    - [Step 071: Enemy bullets](#step-071-enemy-bullets)
+    - [Step 072: Scoring](#step-072-scoring)
+  - [Step 08: Extra goodies](#step-08-extra-goodies)
+    - [Step 081: Replay](#step-081-replay)
+    - [Step 082: Themes](#step-082-themes)
+    - [Step 083: GIF capturing](#step-083-gif-capturing)
+- [Game Distribution](#game-distribution)
+- [Community](#community)
+- [Feedback and Critique](#feedback-and-critique)
 
 # About CrispGameLib
 
@@ -45,32 +67,32 @@ Here's my attempt to change that. If you are into making videogames and looking 
 CrispGameLib priotizes simplicity and leanness of the game, taking care of many common elements, allowing the developer to focus on the creating gameplay, prototyping and getting the game to a playable state. Here are some notable facts:
 
 * Games are playable only on web browsers, presented as [HTML5 canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas).
-* The gameloop, collision detection, and high scores, are automatically handled the hood.
+* The gameloop, collision detection, and high scores, are automatically handled under the hood.
 * All drawn sprites are limited to squared shapes of a preset of 16 colours.
 * Custom sprites are limited to the size of 6x6, represented by characters defined in the array `characters []` (more on this later).
 * Audio and music are procedurally generated and limited to a set of 8 sound effects (also, more on this later).
 * Control is restricted to one pointer, controlled with mouse or single touch.
 
-Needless to say, like most game engines and libraries out there, CrispGameLib is great for a particular kind of games, and not so great for others. If you are making a massive open world RPG with a lot of fine tuning and complex systems, this is not going to cut it. On the other hand, if you are prototyping an idea for smartphones you have in mind, or just looking for something you can spend on for less than an afternoon, here's a great choice of tool.
+Needless to say, like most game engines and libraries out there, CrispGameLib is great for a particular kind of games, and not so great for others. If you are making a massive open world RPG with a lot of fine tuning and complex systems, this is not going to cut it. On the other hand, if you are prototyping an idea for smartphones you have in mind, or just looking for something small you can spend on for less than an afternoon, here's a great choice of tool.
 
 A game speaks a million words, so do check out [Kenta's works][aba-asa] and [mine][cgl-jun] for a good idea of what this library can do.
 
 # The goal
 
-This is a project driven tutorial. We are going to learn gamedev by making a very particular game: [Charge Rush RE][crr], which is my own remake of the mgl.coffee-powered [CHARGE RUSH][cro] by Kenta himself. This is a game I have massively enjoyed for many years over, which also has a great balance of simplicity, complexity, and depth, in from both gameplay and gamedev perspectives. These are great properties for a learning project. I will also make small deviations from my release to facilitate the tutorial.
+This is a project driven tutorial. We are going to learn gamedev by making a very particular game: [Charge Rush RE][crr], which is my own remake of the mgl.coffee-powered [CHARGE RUSH][cro] by Kenta himself. This is a game I have massively enjoyed for many years over, which also has a great balance of simplicity, complexity, and depth, in from both gameplay and gamedev perspectives. These are great properties for a learning project. The final game does have some small deviations, which you can take a look at [here]().
 
-At the end of the tutorial, besides having your own version of Charge Rush running and  working, hopefully you'll have a good idea of:
-* The software architecture and thinking process to create a game with CrispGameLib.
+At the end of the tutorial, besides having your own version of Charge Rush running and working, hopefully you'll have a good idea of:
+* The code structure and thinking process to create a game with CrispGameLib.
 * Using GameCrispLib features, including drawing, resolving collisions, using audio, and managing scores.
 * How game data are structured, accessed, and iterated in container arrays, with or without using CrispGameLib built-in functions (`times()` and `remove()`).
 
 Bonus things that would be extremely great if you could get an understanding of:
-* How to distribute and deploy a CrispGameLib game on the web via GitHub Page.
 * How CrispGameLib works under the hood and its quirks.
 * How to optimize the collision detection processes.
 * The software development practices I discuss and your own opinionated preferences.
 * How to make your next game.
 * How to use *JSDoc* to benefit a Javascript project.
+* How to distribute and deploy a CrispGameLib game on the web via GitHub Page.
 
 # What you need
 
@@ -86,26 +108,25 @@ Finally, this tutorial was written on Windows, so don't freak out if things look
 
 # How to read this tutorial
 
-Just read it like you should read any tutorial: take it slow, make sure you get the part right, and try not to skip 😁.
+Just read it like you should read any tutorial: take it slow, make sure you get the part right, and try not to skip.
 
-In the folder `docs` of this repository, you'll find folders named `step_xx`, representing the incomplete versions of the game, corresponding to the steps of this tutorial. You can access them by visiting the corresponding URL from your web browser `http://localhost:4000/?step_xx` after running `light-server`. This might sound confusing now, but you'll get the idea after setting up at step 0. Use these as references for your progress in case you run into any problem.
+In the folder `docs` of this repository, you'll find folders named `step_xx`, representing the incomplete versions of the game, corresponding to the steps of this tutorial. You can either access them locally by visiting the corresponding URL from your web browser `http://localhost:4000/?step_xx` after running `light-server`, or visiting the deployment via GitHub Page, listed at the end of each step. This might sound confusing now, but you'll get the idea after setting up at step 0. Use these as references for your progress in case you run into any problem.
 
-Alternatively, you can also access these steps from the deployment of this repository (example TODO), which I will also put at the end of each step.
 
 Additionally, you'll also run into certain notations where I explain certain aspects of making the game:
-* **CrispGameLib quirk**: explanation of the inner workings of the library those are most likely unusual compared to other tools that you take note of.
+* **CrispGameLib quirk**: explanation of the inner workings of the library those are most likely unusual compared to other tools that you have heard of.
 * **Javascript feature**: self-explanatorily, this tutorial assumes that are you unfamiliar with Javascript and will briefly explain features or aspects of the language when it's due.
 * **Under the hood**: this is where I will explain shorthand commands and how things inner work behind the scene to give you a bit more knowledge. Hopefully, things will look a bit less like magic to you.
-* **Further reading**: self-explanatorily, there is only so much I can cover in one single tutorial and some matters are best researched in-depth.
-* **Alternative implementation**: many problems or outcomes have no one single definite solution. Occasionally, I will provide an alternative implementation that has some sort of merits you can consider which would hopefully your understanding of the matter.
+* **Further reading**: self-explanatorily, there is only so much I can cover in one single tutorial and some matters are best researched in-depth separately.
+* **Alternative implementation**: many problems or outcomes have no one single definite solution. Occasionally, I will provide an alternative implementation that has some sort of merits you can consider which would hopefully reinforce your understanding of the matter.
 * **For your experimentation**: this is where I encourage you to mildly deviate from the model code and do something yourself. These are generally harmless or have very little effect on the game, but will reinforce your understanding of how the codebase works.
-* **SWE practice**: while it might be strange to see the term software engineering slung around in beginner-level and simplicity-focused tutorial, but as a software developer myself, I advocate for readable and maintainable codebases. While this is somewhat contradictory to the nature and purpose of this library (games made quick and fast), I believe a healthy balance can be achieved.
+* **SWE practice**: while it might be strange to see the term software engineering slung around in beginner-level and simplicity-focused tutorial, but as a software developer myself, I advocate for readable and maintainable codebases. While this is somewhat contradictory to the nature and purpose of this library (games made quick and fast), I believe a healthy balance can be achieved. I will suggest some basic rule you should follow to maintain a good codebase in these sections.
 
 Naturally, this tutorial is highly opinionated and based on my personal experiences and understanding. You are highly encouraged to develop your own preferences and stick to them. I also highly welcome feedback and critiques; feel free to contact me in anyway you can regarding those.
 
 # The tutorial
 
-This is where the fun begins and things start happening on your computer 😈.
+This is where the fun begins and things start happening on your computer.
 
 ## Step 00: Setting up
 
@@ -113,7 +134,7 @@ This is where the fun begins and things start happening on your computer 😈.
 
 Like any development work, before we even get to do anything at all on the game, some software installation and build environment setup is due. This is done only once on each device system that you work on. These are very ubiquitous software for development devices. Go to each URL, follow the installation prompting, and proceed with default settings should get it done.
 
-* [Git](https://git-scm.com/downloads) (can be omitted, but I strongly recommend you not)
+* [Git](https://git-scm.com/downloads) (can be omitted, but I strongly recommend you not to)
 * [NodeJS](https://nodejs.org/en/download/)
 * A terminal of your choice. I personally use [Hyper](https://hyper.is/#installation). You'll also need to enable `bash` [if you're on Windows](https://gist.github.com/coco-napky/404220405435b3d0373e37ec43e54a23).
 * A text editor/IDE of your choice. This tutorial assumes you are using [VSCode](https://code.visualstudio.com/).
@@ -157,13 +178,13 @@ In ways you feel comfortable with, go to the folder `docs`, make a copy of `docs
 Return to your terminal and enter `npm run watch_games`. You should now no longer be able to type into the console (hint: if you'd like to exit, press `CTRL + C`). Meanwhile, open your browser and access the URL `http://localhost:4000/?chargerush`.
 
 ----
-**Under the hood**: if you look into `package.json`, you will notice that `npm run watch_games` is a shorthand for `"light-server -s docs -w \"docs/**/* # # reload\""`, which initialise `light-server`, which is an npm package that allows you to run a static http server with livereloading (which means every time you save, the server will restart and refresh, running your new code immediately. Pretty magic, huh?). You don't need to know everything about `light-server`, but it's useful to understand [what it is](https://www.npmjs.com/package/light-server).
+**Under the hood**: if you look into `package.json`, you will notice that `npm run watch_games` is a shorthand for `"light-server -s docs -w \"docs/**/* # # reload\""`, which initialises `light-server`, which is an npm package that allows you to run a static http server with livereloading (meaning that every time you save, the server will restart and refresh, running your new code immediately. Pretty magic, huh?). You don't need to know everything about `light-server`, but it's useful to understand [what it is](https://www.npmjs.com/package/light-server).
 
 ----
 
 If you see a square bright screen against a slightly darker background, with what appears to be score and high score on the top corners, then congratulations, you've done that right 🥂.
 
-![Step 000 - Engine running](images/step_000.png)
+![Step 000 - Engine running](images/step_001.png)
 
 In case you are not getting there yet:
 * Check the terminal and make sure that `light-server` is running.
@@ -174,7 +195,7 @@ Once you've got the game running, open VSCode in the root folder of the reposito
 
 ![My setup](images/step_002.png)
 
-If you ever pause this tutorial to return another time, **don't forget** to run the `light-server` again.
+If you ever pause this tutorial to return another time, **don't forget** to run `light-server` again with `npm run watch_games`.
 
 Things will get interesting from here.
 
@@ -215,7 +236,7 @@ function  update() {
 }
 ```
 ----
-**SWE practice**: Do be very mindful of indentations. Incorrect indentations make the codes hard to read, on top of diff complications in version control. This template and tutorial are set to indentation of 4 whitespaces. **Further reading**: [Indentation Style](https://en.wikipedia.org/wiki/Indentation_style).
+**SWE practice**: Do be very mindful of indentations. Incorrect indentations make the codes hard to read, on top of causing complications in diffs in version control. This template and tutorial are set to indentation of 4 whitespaces. **Further reading**: [Indentation Style](https://en.wikipedia.org/wiki/Indentation_style).
 
 ----
 
@@ -302,7 +323,7 @@ If you personally find them unnecessary, it is understandable and the opinion ha
 ### Step 014: The initialising block
 
 ----
-**Under the hood**: Like most game engines, CrispGameLib has an looping `update()`, running 60 times per second. The framerate is fixed and not changeable. This also mean that games made with CrispGameLib are entirely frame-rate dependent, omitting the need to handle `deltaTime` and instead, working with number of frames directly (if you have ever used Pico-8, you'd get the idea). You also get access to `ticks`, which provides you with the number of frames the game has passed.
+**Under the hood**: Like most game engines, CrispGameLib has an `update()` loop, running 60 times per second. The framerate is fixed and not changeable. This also mean that games made with CrispGameLib are entirely frame-rate dependent, omitting the need to handle `deltaTime` and instead, working with number of frames directly (if you have ever used Pico-8, you'd get the idea). You also get access to `ticks`, which provides you with the number of frames the game has passed.
 
 ----
 
@@ -391,9 +412,9 @@ We'll now be drawing the stars on screen. Add this block inside the `update()` b
 
 This block should look a lot less foreign, if you have ever seen videogame codes:
 * The method `Array.forEach()` iterates and execute on each element in the array. In this case, each `star` is updated 60 times a second. **Further reading**: [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach).
-* `s.pos.y += s.speed` adds the y coordinate of the star by `speed` (which we randomly generated when we created the stars), bringing the star perpetually downwards to the bottom of the screen (unlike high school math, the y-axis points downwards).
+* `s.pos.y += s.speed` adds the y coordinate of the star by `speed` (which we randomly generated when we created the stars), bringing the star perpetually downwards to the bottom of the screen (unlike conventional high school math, the y-axis points downwards).
 * `wrap(minX, maxX, minY, maxY)` is a method for `Vector`, which wrap the object back to the otherside, when the object is outside of the screen (which is specified by the screen coordinates as the four arguments). The handling of the x coordinate here is redundant as it never changes. **Alternatively,** this can be re-written more effectively as `if (s.pos.y > G.HEIGHT) s.pos.y = 0;`
-* The color is set before the star is drawn with `color()` (`light_black` sounds a bit wacky, but it does make sense when you look at the list of colors). Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument. **Further reading**: [the drawing example in CrispGameLib](https://abagames.github.io/crisp-game-lib-games/?ref_drawing). Take note of the alternative use of `x` and `y` arguments as coordinates in opposed to a `Vector`.
+* The color is set before the star is drawn with `color()` (`light_black` sounds a bit wacky, but it does make sense when you look at the list of colors). Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument. **Further reading**: [the drawing example demo in CrispGameLib](https://abagames.github.io/crisp-game-lib-games/?ref_drawing). Take note of the alternative use of `x` and `y` arguments as coordinates in opposed to a `Vector`.
 
 ![Moving stars](images/step_015.gif)
 
@@ -447,7 +468,7 @@ Do take note of the use of game size variables `G.WIDTH` and `G.HEIGHT`, divided
 
 ### Step 022: Input handling
 
-This is, however, still not interactive. We will start this by handling the `input`. By conventional standard, an entity's updates occur before drawing, so put this line before the drawing codes above.
+This is, however, still not interactive. We will fix this by handling `input`. By conventional standard, an entity's updates occur before drawing, so put this line before the drawing codes above.
 
 ```javascript
     player.pos = vec(input.pos.x, input.pos.y);
@@ -470,13 +491,13 @@ However, we have one problem: the player occasionally moves out of the game scre
 
 ![Clamped player's position](images/step_022b.gif)
 
-You will notice that `Vector.clamp(minX, maxX, minY, maxY)` is very similar to `wrap()`, it just has a slightly different outcome.
+You will notice that the interface and signature of `Vector.clamp(minX, maxX, minY, maxY)` is very similar to `wrap()`, though it does something else.
 
 ### Step 023: Custom sprite
 
 A square, however, is not very appealing or interesting. This is where I show you how to use custom sprite characters.
 
-Just below the `description` declaration, notice that there is an empty array `character = [];`. Time to use it. Try populate it with something. Do note the use of backticks for template literal and how there was no indentation. VSCode is going to automatically insert indentations among other things, so make sure you paste in correctly and manually fix any incorrect whitespaces:
+Just below the `description` declaration, notice that there is an empty array `character = [];`. Time to use it. Try populate it with something. Do note the use of backticks for **template literal** and how there was no indentation. VSCode is going to automatically insert indentations among other things, so make sure you paste in correctly and manually fix any incorrect whitespaces:
 
 ```javascript
 characters = [
@@ -491,7 +512,7 @@ cc  cc
 ];
 ```
 
-Now, replace the drawing line with something else:
+Now, replace the drawing line with another function to use this character:
 ```javascript
     color("cyan");
     // box(player.pos, 4);
@@ -511,7 +532,7 @@ Notice that the shape has been changed to the new array element we have just pop
 
 ![Original color](images/step_023b.gif)
 
-Mind-blowing, eh?
+Interesting, eh?
 
 In order to explain this weird phenomenon you've just witnessed, I need to show you an excerpt of the documentation, regarding the color list:
 
@@ -546,9 +567,7 @@ Notice that the `l` and `c` are actually short forms of the color `black` and `c
 ----
 **For your experimentation**: Using the available colors, make your own sprite that represents the player's ship by modifying the first element in `characters`. Do notice that you are limited only to the size 6x6.
 
-----
 
-----
 **CrispGameLib quirk**: At this point, you should also notice that the sprite is drawn at the middle of your cursor position. This is a slightly deviation from the norm in other game engine, in which the drawing origin is usually at the top left corner. In CrispGameLib, the drawing origin is in the middle.
 
 ----
@@ -603,7 +622,7 @@ let player;
 let fBullets;
 ```
 
-Do take note of the new properties added type `Player`: `firingCooldown` and `isFiringLeft`. If you have done your JSDoc properly, you would also notice that VSCode will start yelling at you, telling you that the `player` you initialised is incorrect and missing some properties (which is exactly what we expected). Other than fixing this, you should also start initalise `fBullets`, which is a short form of *friendly bullets*, to differentiate against *enemy bullets* we'd have later on.
+Do take note of the new properties added type `Player`: `firingCooldown` and `isFiringLeft`. If you have done your JSDoc properly, you would also notice that VSCode will start yelling at you, telling you that the `player` instance you initialised is incorrect and missing some properties (which is exactly what we expected). Other than fixing this, you should also start initalise `fBullets`, which is a short form of *friendly bullets*, to differentiate against *enemy bullets* we'd have later on.
 
 ```javascript
         player = {
@@ -615,7 +634,7 @@ Do take note of the new properties added type `Player`: `firingCooldown` and `is
         fBullets = [];
 ```
 
-Next up, we update them per due process:
+Next up, we update them:
 ```javascript
     // Updating and drawing the player
     player.pos = vec(input.pos.x, input.pos.y);
@@ -646,7 +665,7 @@ Next up, we update them per due process:
 ```
 
 
-If you have played videogames before, you probably have heard of the concept "cooldown", with which, you need to wait for an interval time before you can use a powerful ability again. Though a machine gun is much faster, concept is similar, with a much shorter cooldown time, giving the feeling of bullets being constantly fired. 
+If you have played videogames before, you probably have heard of the concept "cooldown", with which, you'd need to wait for an interval time before you can use a powerful ability again. Though a machine gun is much faster, concept is similar, with a much shorter cooldown time, giving the feeling of bullets being constantly fired. 
 
 Here, the cooldown is set `firingCooldown: G.PLAYER_FIRE_RATE` in the initialisation; and in the update loop, it is perpetually reduced `player.firingCooldown--;` (this is a shorthard for `player.firingCooldown = player.firingCooldown - 1;` in case you are unfamiliar). By the time the cooldown is completed `(player.firingCooldown <= 0)`, a bullet is created, it is set back to the intial value of `G.PLAYER_FIRE_RATE`, and the process repeats. At the fire rate of `5` (frames), the ship is now firing 12 rounds per second.
 
@@ -719,7 +738,7 @@ You may also now comment out the number of bullets lines.
 
 ### Step 034: Muzzleflash and particles
 
-There is, however, one more thing I'd like to go over before before we're done with firing guns: we're going to put in some exiciting muzzleflash, which we will use particles to represent.
+There is, however, one more thing I'd like to go over before before we're done with firing guns: we're going to put in some exiciting muzzleflash, which we will use **particles** to represent.
 
 ```javascript
     if (player.firingCooldown <= 0) {
@@ -770,7 +789,7 @@ function particle(
   angleWidth?: number
 );
 ```
-Do take note of my use of `PI` to achieve a 90 degree, and the alternative use of `Vector` instead of separated `x` and `y` coordinates, a recurring motif in GameCrispLib.
+Do take note of my use of `PI` to achieve a 90 degree angle, and the alternative use of `Vector` instead of separated `x` and `y` coordinates, a frequent recurring motif in GameCrispLib API.
 
 Step 03 conclusion: [deployment]() / [code]() TODO
 
@@ -782,7 +801,7 @@ Let's get some enemies in.
 
 Before we start doing anything, we need to take a look at what we're going to do. [Here's the original game again][cro], if you need a refresher.
 
-While it's not exactly obvious, but the enemies are spawned in a very particular awy:
+While it's not exactly obvious, but the enemies are spawned in a very particular way:
 * Enemies are evenly spreaded vertically.
 * Enemies' horizontal positions are randomized.
 * All enemies in the same wave have the same speed.
@@ -895,7 +914,7 @@ Step 04 conclusion: [deployment]() / [code]() TODO
 
 ## Step 05: Collision detection
 
-In CrispGameLib, objects' graphic also serve as their hitbox. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites it is colliding with in the property `isColliding`. **Further reading**: [Collision example](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors.
+In CrispGameLib, objects' graphic also serve as their hitbox. Everytime a sprite is drawn, regardless with `char()`, `box()`, or `text()`, each and everyone of them is keeping track of which other sprites it is colliding with in the property `isColliding`. **Further reading**: [Collision example demo](https://abagames.github.io/crisp-game-lib-games/?ref_collision). For this reason, strategic thinking about collision should always be planned, such as objects of different types, should have at least different types and different colors, if  their collision is to have an effect on the game.
 
 ### Step 051: Destroying enemies
 
@@ -921,9 +940,7 @@ Now, let us make enemies destroyable by friendly bullets:
 
 ![Destroying enemies](images/step_051.gif)
 
-Here, the `boolean` variable `isCollidingWithFBullets` is used as a shorthand to check whether a sprite character of type `b` is colliding with any of the yellow rectangles (which are representing a friendly bullet). This initialisation also causes the `char` `b` to be drawn onscreen, even when it's not explicitly used for drawing purpose.
-
-`isCollidingWithFBullets` is then used to check whether there should be a small particle explosion at the location of the `Enemy` object and whether this `Enemy` object should be removed from the container.
+Here, the `boolean` variable `isCollidingWithFBullets` is used as a shorthand referral to check whether a sprite character of type `b` is colliding with any of the yellow rectangles (which are representing a friendly bullet). This initialisation also causes the `char` `b` to be drawn onscreen, even when it's not explicitly used for such purpose. `isCollidingWithFBullets` is then used to check whether there should be a small *particle* explosion at the location of the `Enemy` object, and whether this `Enemy` object should be removed from the container.
 
 ### Step 052: Two-way interaction
 
@@ -940,7 +957,7 @@ Let us try:
 
 While this syntatically and logically correct, you will notice this does not work. The enemies are destroyed, but not friendly bullets. The question is why?
 
-Consider this: everything we have written happened in one single frame, which occurs 60 times in a second. By examining the location of `remove(fBullets, (fb) => {});` in the chronological logic of the `update()` frame, you will noticed that by the a `fBullet` attempts to detect another `char.b`, no `char.b` has been drawn for that frame.
+Consider this: everything we have written happened in one single frame, which occurs 60 times in a second. By examining the location of `remove(fBullets, (fb) => {});` in the chronological sequence of an `update()`, you will noticed that when a `fBullet` attempts to detect another `char.b`, no `char.b` has yet been drawn in that frame.
 
 The solution: let `fBullets` react to a collision only after `Enemies` have been drawn:
 
@@ -984,7 +1001,7 @@ The solution: let `fBullets` react to a collision only after `Enemies` have been
 
 You will also notice that `fBullets` are drawn twice: the first time to allow themselves to be interacted with from `enemies`, and the second time, to interact with `enemies` from themselves.
 
-This is a CrispGameLib quirk, while this does sound mind-boggling, it is not as complicated as it looks. The takeaway is: always make sure that the two involved colliding sprites are already drawn, which means occasionally drawing some of them twice.
+This is a **CrispGameLib quirk**, while this does sound mind-boggling at first, it is not as complicated as it looks. The takeaway is: always make sure that the two colliding sprites are already drawn, which means occasionally drawing some of them more than once.
 
 Step 05 conclusion: [deployment]() / [code]() TODO
 ## Step 06: How audio works
@@ -1047,7 +1064,7 @@ Destroy enemies.
 `;
 ```
 
-The bottom line is, CrispGameLib uses a combination of your assigned random `seed` and the content of your `description` to generate a particular sets of audio for your game. This means you are probably putting minimum work while still achieving a relatively unique audio experience for each game.
+The bottom line is, CrispGameLib uses a combination of your assigned random `seed` and the content of your `description` to generate a particular sets of audio for your game. This means you are putting in minimum work while still achieving a relatively unique audio experience for each of your games.
 
 Of course, without saying, it comes with a major downside. It means that you have pretty much almost no control at all over audio, and if you are looking to fine tune every single piece of audio, CrispGameLib can't give you that without some major modification to the engine.
 
@@ -1138,7 +1155,7 @@ const G = {
 
 Don't forget the initialise and fix whatever VSCode is yelling at you, too.
 
-The attacking mechanism of `enemies` isn't unlike `player`'s, without `firingCooldown` self-decreasing towards zero and reset again:
+The attacking mechanism of `enemies` isn't unlike `player`'s, as `firingCooldown` decreases towards zero, fires a bullet, and resets again:
 
 ```javascript
     remove(enemies, (e) => {
@@ -1168,7 +1185,7 @@ The attacking mechanism of `enemies` isn't unlike `player`'s, without `firingCoo
 
 Take note of the utility method `Vector.angleTo(destinationVector)`. **Alternatively**, you can do it the old-fashioned way with trigonometry: `const angle = Math.atan2(player.pos.y - e.pos.y, player.pos.x - e.pos.x);`
 
-Also, update `eBullets` and handle the collision with player.
+Also, update `eBullets` and handle the collision with `player`.
 
 ```javascript
     remove(eBullets, (eb) => {
@@ -1194,9 +1211,9 @@ Also, update `eBullets` and handle the collision with player.
     });
 ```
 
-While this looks like a lot to comprehend, most of these are no longer new at this point:
+While this looks like quite a bit to comprehend, most of these are no longer new at this point:
 * Do take note of the third argument for `char()`, which takes in an object. The property `rotation` here isn't the same as `angle` and works slightly different (a 90 degree rotation is represented by `1`). This property allows the bullet to rotate around itself.
-* The function `end()` which ends the game, automatically putting the game into an ending state and returning to the title screen.
+* The function `end()`, which self-describingly ends the game, automatically puts the game into an ending state and returns to the title screen subsequently.
 * `Vector.isInRect(topLeftX, topLeftY, length, width)`, self-exlanatorily, checks whether the coordinate is within a particular rectangle. Here it is used to detect whether the bullet is within the game screen.
 
 ![Firing enemy bullets](images/step_071.gif)
@@ -1207,13 +1224,13 @@ At this point, it's fair that `enemies` are also able to destroy the `player`, t
         const isCollidingWithPlayer = char("b", e.pos).isColliding.char.a;
         if (isCollidingWithPlayer) {
             end();
-            play("powerUp"); // Un
+            play("powerUp");
         }
 ```
 
 ### Step 072: Scoring
 
-Here's the part that makes the player keeps playing and coming back. It is however, surprisingly simple.
+Here's the part that makes the player keeps playing and coming back. It is, however, surprisingly simple.
 
 Each destroyed enemy should provide the player with a score of multiplication of 10, based on the `waveCount`. Any contact between `eBullet` and `fBullet` will yield a small amount of scores, too.
 
@@ -1241,7 +1258,7 @@ if (!ticks) {
     }
 ```
 
-Upon collision:
+Upon collisions:
 ```javascript
     remove(enemies, (e) => {
         const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
@@ -1261,7 +1278,7 @@ Upon collision:
     });
 ```
 
-And congrats, the game is now in a shippable state 😁.
+And congratulations, the game is now in a very playable state 🎉.
 
 ![Scoring](images/step_072.gif)
 
@@ -1316,26 +1333,32 @@ options = {
     captureCanvasScale: 2
 }
 ```
-With at least the first option enabled, pressing the key `C` on your keyboard while running the game will record the last 5 seconds of footage, which will then be inserted into the HTML page the game is running on (you can then retrieve the gif file from there).
+With at least the first option enabled, pressing the key `C` on your keyboard while running the game will record the last 5 seconds of footage, which will then be inserted into the HTML page the game is running on. You can then retrieve the gif file from there.
 
 By enabling the first option only, you'll get a relatively small GIF with horizontal margins which is optimized for sharing on Twitter. 
 
 ![Replay](images/step_083a.gif)
 
-Enabling `isCapturingGameCanvasOnly` will allow you to capture only the game canvas, in which case, you can use the third option `captureCanvasScale` to adjust the output size.
+Enabling `isCapturingGameCanvasOnly` will allow you to capture only the game canvas, in which case, you can use the third option `captureCanvasScale` to adjust the output size. This is also how I have been recording gifs for this tutorial.
 
 Needless to say, the smaller the output, the faster it works. It should also be noted that any theme that isn't `simple` and `dark` is not going to play very well with these two options, on top of their potential performance issue.
+
+So there you are, congratulations. Hopefully you have now acquired a good amount of knowledge of CrispGameLib and ready take on your own ideas.
+
+Step 08 conclusion: [deployment]() / [code]() TODO
 
 # Game Distribution
 
 The most simple way to distribute your games made with CrispGameLib is using GitHub Page.
 
-There are many ways to do this. After registering a GitHub account, you may create a repository, either brand new or a fork of [CrispGameLib][cgl-url], which ever contains `index.html` and `bundle.js` found in the `docs` folder. Take the game source in the same folder with you, and by accessing the `index.html` with a parameter: `<address>/index.html?<game-folder-name>`.
-
 If you already have a forked repository of CrispGameLib:
 * Access the Settings/Pages for the forked repository.
-* Change Source folder to `/docs`.
-* Access the game at `https://<your-user-name>.github.io/<repository-name>/?<game-folder-name>`.
+* Change Source folder to `/docs` in the dropdown menu.
+* Access the game at `https://<your-username>.github.io/<repository-name>/?<game-folder-name>`.
+
+At this point, you may simply make a copy of `_template`, rename it, and start working on your own games. Your new commits and changes, once pushed to remote, will be instantly reflected on your GitHub Page. Do create branches if you have need to.
+
+Distributing the direct URLs is also a convenient way to let your audiences access your game.
 
 # Community
 
