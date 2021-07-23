@@ -546,10 +546,14 @@ Notice that the `l` and `c` are actually short forms of the color `black` and `c
 
 ----
 
+----
+**CrispGameLib quirk**: At this point, you should also notice that the sprite is drawn at the middle of your cursor position. This is a slightly deviation from the norm in other game engine, in which the drawing origin is usually at the top left corner. In CrispGameLib, the drawing origin is in the middle.
+
+----
+
 Step 02 conclusion: [deployment]() / [code]() TODO
 
 ## Step 03: Object control, creation, and removal (fBullets)
-
 
 ## Step 04: Mechanic control (enemies)
 
