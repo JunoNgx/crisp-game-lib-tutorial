@@ -1048,6 +1048,150 @@ Of course, without saying, it comes with a major downside. It means that you hav
 
 ## Step 07: More complex movements (eBullets)
 
+The game is finally taking shape. We are just a few steps away from completing this.
+
+### Step 071: Enemy bullets
+
+We are now adding the final object type: enemy bullets, which means more type declaration and adding more properties to existing types.
+
+```javascript
+// New property: firingCooldown
+/**
+ * @typedef {{
+ * pos: Vector,
+ * firingCooldown:
+ * }} Enemy
+ */
+
+// New type
+/**
+ * @typedef {{
+ * pos: Vector,
+ * angle: number,
+ * rotation: number
+ * }} EBullet
+ */
+
+/**
+ * @type { EBullet [] }
+ */
+let eBullets;
+
+```
+
+More sprites:
+```javascript
+characters = [
+`
+  ll
+  ll
+ccllcc
+ccllcc
+ccllcc
+cc  cc
+`,`
+rr  rr
+rrrrrr
+rrpprr
+rrrrrr
+  rr
+  rr
+`,`
+y  y
+yyyyyy
+ y  y
+yyyyyy
+ y  y
+`
+];
+```
+
+More gameplay variables:
+```javascript
+const G = {
+	WIDTH: 100,
+	HEIGHT: 150,
+
+    STAR_SPEED_MIN: 0.5,
+	STAR_SPEED_MAX: 1.0,
+    
+    PLAYER_FIRE_RATE: 4,
+    PLAYER_GUN_OFFSET: 3,
+
+    FBULLET_SPEED: 5,
+
+    ENEMY_MIN_BASE_SPEED: 1.0,
+    ENEMY_MAX_BASE_SPEED: 2.0,
+    ENEMY_FIRE_RATE: 45,
+
+    EBULLET_SPEED: 2.0,
+    EBULLET_ROTATION_SPD: 0.1
+};
+```
+
+Don't forget the initialise and fix whatever VSCode is yelling at you, too.
+
+The attacking mechanism of `enemies` isn't unlike `player`'s, without `firingCooldown` self-decreasing towards zero and reset again:
+
+```javascript
+    remove(enemies, (e) => {
+        e.pos.y += currentEnemySpeed;
+        e.firingCooldown--;
+        if (e.firingCooldown <= 0) {
+            eBullets.push({
+                pos: vec(e.pos.x, e.pos.y),
+                angle: e.pos.angleTo(player.pos),
+                rotation: rnd()
+            });
+            e.firingCooldown = G.ENEMY_FIRE_RATE;
+            play("select"); // Be creative, you don't always have to follow the label
+        }
+
+        color("black");
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+            play("explosion");
+        }
+
+        return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
+    });
+```
+
+Take note of the utility method `Vector.angleTo(destinationVector)`. **Alternatively**, you can do it the old-fashioned way with trigonometry: `const angle = Math.atan2(player.pos.y - e.pos.y, player.pos.x - e.pos.x);`
+
+Also, update `eBullets` and handle the collision with player.
+
+```javascript
+    remove(eBullets, (eb) => {
+        // Old-fashioned trigonometry to find out the velocity on each axis
+        eb.pos.x += G.EBULLET_SPEED * Math.cos(eb.angle);
+        eb.pos.y += G.EBULLET_SPEED * Math.sin(eb.angle);
+        // The bullet also rotates around itself
+        eb.rotation += G.EBULLET_ROTATION_SPD;
+
+        color("red");
+        const isCollidingWithPlayer
+            = char("c", eb.pos, {rotation: eb.rotation}).isColliding.char.a;
+
+        if (isCollidingWithPlayer) {
+            // End the game
+            end();
+            play("lucky");
+        }
+        
+        // If eBullet is not onscreen, remove it
+        return (!eb.pos.isInRect(0, 0, G.WIDTH, G.HEIGHT));
+    });
+```
+
+While this looks like a lot to comprehend, most of these are no longer new at this point:
+* Do take note of the third argument for `char()`, which takes in an object. The property `rotation` here isn't the same as `angle` and works slightly different (a 90 degree rotation is represented by `1`). This property allows the bullet to rotate around itself.
+* The function `end()` which ends the game, automatically putting the game into an ending state and returning to the title screen.
+* `Vector.isInRect(topLeftX, topLeftY, length, width)`, self-exlanatorily, checks whether the coordinate is within a particular rectangle. Here it is used to detect whether the bullet is within the game screen.
+
+### Step 072: Scoring
 
 # Game Distribution
 

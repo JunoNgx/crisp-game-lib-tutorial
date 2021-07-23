@@ -22,7 +22,13 @@ rrpprr
 rrrrrr
   rr
   rr
-`,
+`,`
+y  y
+yyyyyy
+ y  y
+yyyyyy
+ y  y
+`
 ];
 
 // Game design variable container
@@ -39,7 +45,11 @@ const G = {
     FBULLET_SPEED: 5,
 
     ENEMY_MIN_BASE_SPEED: 1.0,
-    ENEMY_MAX_BASE_SPEED: 2.0
+    ENEMY_MAX_BASE_SPEED: 2.0,
+    ENEMY_FIRE_RATE: 45,
+
+    EBULLET_SPEED: 2.0,
+    EBULLET_ROTATION_SPD: 0.1
 };
 
 // Game runtime options
@@ -92,7 +102,8 @@ let fBullets;
 
 /**
  * @typedef {{
- * pos: Vector
+ * pos: Vector,
+ * firingCooldown: number
  * }} Enemy
  */
 
@@ -100,6 +111,19 @@ let fBullets;
  * @type { Enemy [] }
  */
 let enemies;
+
+/**
+ * @typedef {{
+ * pos: Vector,
+ * angle: number,
+ * rotation: number
+ * }} EBullet
+ */
+
+/**
+ * @type { EBullet [] }
+ */
+let eBullets;
 
 /**
  * @type { number }
@@ -110,6 +134,10 @@ let currentEnemySpeed;
  * @type { number }
  */
 let waveCount;
+
+/**
+ * 
+ */
 
 // The game loop function
 function update() {
@@ -142,6 +170,7 @@ function update() {
 
         fBullets = [];
         enemies = [];
+        eBullets = [];
 	}
 
     // Spawning enemies
@@ -151,7 +180,10 @@ function update() {
         for (let i = 0; i < 9; i++) {
             const posX = rnd(0, G.WIDTH);
             const posY = -rnd(i * G.HEIGHT * 0.1);
-            enemies.push({ pos: vec(posX, posY) })
+            enemies.push({
+                pos: vec(posX, posY),
+                firingCooldown: G.ENEMY_FIRE_RATE 
+            });
         }
     }
 
@@ -215,6 +247,17 @@ function update() {
 
     remove(enemies, (e) => {
         e.pos.y += currentEnemySpeed;
+        e.firingCooldown--;
+        if (e.firingCooldown <= 0) {
+            eBullets.push({
+                pos: vec(e.pos.x, e.pos.y),
+                angle: e.pos.angleTo(player.pos),
+                rotation: rnd()
+            });
+            e.firingCooldown = G.ENEMY_FIRE_RATE;
+            play("select");
+        }
+
         color("black");
         // Interaction from enemies to fBullets
         // Shorthand to check for collision against another specific type
@@ -236,5 +279,26 @@ function update() {
         color("yellow");
         const isCollidingWithEnemies = box(fb.pos, 2).isColliding.char.b;
         return (isCollidingWithEnemies || fb.pos.y < 0);
+    });
+
+    remove(eBullets, (eb) => {
+        // Old-fashioned trigonometry to find out the velocity on each axis
+        eb.pos.x += G.EBULLET_SPEED * Math.cos(eb.angle);
+        eb.pos.y += G.EBULLET_SPEED * Math.sin(eb.angle);
+        // The bullet also rotates around itself
+        eb.rotation += G.EBULLET_ROTATION_SPD;
+
+        color("red");
+        const isCollidingWithPlayer
+            = char("c", eb.pos, {rotation: eb.rotation}).isColliding.char.a;
+
+        if (isCollidingWithPlayer) {
+            // End the game
+            end();
+            play("lucky");
+        }
+        
+        // If eBullet is not onscreen, remove it
+        return (!eb.pos.isInRect(0, 0, G.WIDTH, G.HEIGHT));
     });
 }
