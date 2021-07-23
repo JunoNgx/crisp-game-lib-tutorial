@@ -181,6 +181,8 @@ Things will get interesting from here.
 
 ----
 
+Step 00 conclusion: [deployment]() / [code]() TODO
+
 ## Step 01: Basic drawing and update (stars)
 
 ### Step 011: Renaming title
@@ -291,7 +293,7 @@ You can even write this in a more verbose and descriptive manner if you choose t
 ```
 If these feel weird, simply think of them as **class declaration**, a very common concept in programming. You probably will find them a hassle at first, but as far as my experience go, this is probably the most life-changing and quality-of-life improving thing I have found while writing Javascript.
 
-If you personally find them unnecessary, it is understandable and the opinion has merit in the context of these small games. Feel free to omit them from your codes and proceed, though I personally don't recommend it if you are a beginner.
+If you personally find them unnecessary, it is understandable and the opinion has merit in the context of these small games. Feel free to omit them from your codes and proceed, though I personally don't recommend it unless you know very well what you are doing.
 
 **Further reading**: [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html).
 
@@ -379,17 +381,21 @@ We'll now be drawing the stars on screen. Add this block inside the `update()` b
         s.pos.wrap(0, G.WIDTH, 0, G.HEIGHT);
 
         // Choose a color to draw
-        color("light_cyan");
-        // Draw the star as a square of size 2
-        box(s.pos, 2);
+        color("light_black");
+        // Draw the star as a square of size 1
+        box(s.pos, 1);
     });
 ```
 
 This block should look a lot less foreign, if you have ever seen videogame codes:
 * The method `Array.forEach()` iterates and execute on each element in the array. In this case, each `star` is updated 60 times a second. **Further reading**: [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach).
-* `s.pos.y += s.speed` adds the y coordinate of the star by `speed` (which we randomly generated when we created the stars), bringing the star perpetually downwards to the bottom of the screen.
+* `s.pos.y += s.speed` adds the y coordinate of the star by `speed` (which we randomly generated when we created the stars), bringing the star perpetually downwards to the bottom of the screen (unlike high school math, the y-axis points downwards).
 * `wrap(minX, maxX, minY, maxY)` is a method for `Vector`, which wrap the object back to the otherside, when the object is outside of the screen (which is specified by the screen coordinates as the four arguments). The handling of the x coordinate here is redundant as it never changes. **Alternatively,** this can be re-written more effectively as `if (s.pos.y > G.HEIGHT) s.pos.y = 0;`
-* The color is set before the star is drawn with `color()`. Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument. **Further reading**: [the drawing example in CrispGameLib](https://abagames.github.io/crisp-game-lib-games/?ref_drawing). Take note of the alternative use of `x` and `y` arguments as coordinates in opposed to a `Vector`.
+* The color is set before the star is drawn with `color()` (`light_black` sounds a bit wacky, but it does make sense when you look at the list of colors). Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument. **Further reading**: [the drawing example in CrispGameLib](https://abagames.github.io/crisp-game-lib-games/?ref_drawing). Take note of the alternative use of `x` and `y` arguments as coordinates in opposed to a `Vector`.
+
+![Moving stars](images/step_015.gif)
+
+Pretty cool, yeah?
 
 ----
 **For your experimentation**: Try changing:
@@ -399,15 +405,37 @@ This block should look a lot less foreign, if you have ever seen videogame codes
 
 ----
 
-![Moving stars](images/step_015.png)
-
-Pretty cool, yeah?
-
 Step 01 conclusion: [deployment]() / [code]() TODO
 
 ## Step 02: Input and control (player)
 
+Here we will start handling the player entity.
+
 ### Step 021: Another type
+
+First, let's get started with more type and variable declaring. This is not unlike what we did previously:
+```javascript
+/**
+ * @typedef {{
+ * pos: Vector,
+ * }} Player
+ */
+
+/**
+ * @type { Player }
+ */
+let player;
+```
+Unlike `stars`, `player` is in singular form, holding a single object instance of type `Player`. If you are feeling confused, do check out step 013 again.
+
+We can also initialise the `player` object in the initialisation block (this is right below `stars`):
+```javascript
+player = {
+    pos: vec(G.WIDTH * 0.5, G.HEIGHT * 0.5)
+};
+```
+
+And we can even start drawing the player 
 
 ### Step 022: Input handling
 

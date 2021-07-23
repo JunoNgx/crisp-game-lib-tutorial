@@ -39,6 +39,17 @@ options = {
  */
 let stars;
 
+/**
+ * @typedef {{
+ * pos: Vector,
+ * }} Player
+ */
+
+/**
+ * @type { Player }
+ */
+let player;
+
 // The game loop function
 function update() {
     // The init function running at startup
@@ -61,6 +72,10 @@ function update() {
                 speed: rnd(G.STAR_SPEED_MIN, G.STAR_SPEED_MAX)
             };
         });
+
+        player = {
+            pos: vec(G.WIDTH * 0.5, G.HEIGHT * 0.5)
+        };
 	}
 
     // Update for Star
@@ -71,8 +86,8 @@ function update() {
         if (s.pos.y > G.HEIGHT) s.pos.y = 0;
 
         // Choose a color to draw
-        color("light_cyan");
-        // Draw the star as a square of size 2
-        box(s.pos, 2);
+        color("light_black");
+        // Draw the star as a square of size 1
+        box(s.pos, 1);
     });
 }
