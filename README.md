@@ -107,7 +107,7 @@ This is where the fun begins and things start happening on your computer 😈.
 
 ## Step 00: Setting up
 
-### Step 00a: Getting the software
+### Step 001: Getting the software
 
 Like any development work, before we even get to do anything at all on the game, some software installation and build environment setup is due. This is done only once on each device system that you work on. These are very ubiquitous software for development devices. Go to each URL, follow the installation prompting, and proceed with default settings should get it done.
 
@@ -121,7 +121,7 @@ Like any development work, before we even get to do anything at all on the game,
 
 ----
 
-### Step 00b: Getting the library
+### Step 002: Getting the library
 
 Once done, get a distributable version of CrispGameLib, and the simplest way to do so is to clone this repository.
 
@@ -139,7 +139,7 @@ The second command will navigate the terminal into the newly cloned repository f
 
 ----
 
-### Step 00c: Setup the npm package
+### Step 003: Setup the npm package
 
 In case you're not aware, this is an npm package.
 
@@ -183,7 +183,7 @@ Things will get interesting from here.
 
 ## Step 01: Basic drawing and update (stars)
 
-### Step 01a: Renaming title
+### Step 011: Renaming title
 
 The content of the template `main.js` is relatively lean. Comments have been added in for your information:
 
@@ -225,7 +225,7 @@ title = "CHARGE RUSH";
 
 As soon as you save the file, the server should automatically reload and the browser should now shows the game with its title `CHARGE RUSH`. Feeling excited yet?
 
-### Step 01b: Create the tuning data container and change the size
+### Step 012: Create the tuning data container and change the size
 
 Next, we will create a Javascript object which will hold a lot of the game's important data. Add this block just above the `options`.
 
@@ -236,7 +236,7 @@ const G = {
 };
 ```
 ----
-**SWE practice**: this object is declared as a `const` (for constants), which means its value are read-only once the game is started. Constant values should be capitalised in `CAPITALISED_SNAKE_CASE`, as these are essential values we will refer to over and over again throughout the codebase (this is premature, but you will soon see this enough, and also in contrast to local temporary `const` variables which I will use later on). **Further reading**: [When to capitalize your JavaScript constants](https://www.freecodecamp.org/news/when-to-capitalize-your-javascript-constants-4fabc0a4a4c4/).
+**SWE practice**: this object is declared as a `const` (for constant), which means its value is read-only once the game is started. Constant values should be capitalised in `CAPITALISED_SNAKE_CASE`, as these are essential values we will refer to over and over again throughout the codebase (this is premature, but you will soon see this enough, and also in contrast to local temporary `const` variables which I will use later on). **Further reading**: [When to capitalize your JavaScript constants](https://www.freecodecamp.org/news/when-to-capitalize-your-javascript-constants-4fabc0a4a4c4/).
 
 ----
 
@@ -252,9 +252,9 @@ options = {
 
 While it is possible to simply just declare this as `options = {viewSize: {x: 100, y: 150}};`, putting this behind one single constant variables will simplify the game tuning process significantly. If you change your mind and want the game to be square again, `G.HEIGHT` is the only one place to edit, instead of running after every single instances of the value `150`.
 
-We will also explore other properties of `options` along the way.
+We will also explore other properties of `options` along the way. Don't be surprised if you occasionally see strange properties enabled in the step references.
 
-### Step 01c: Container variable and JSDoc
+### Step 013: Container variable and JSDoc
 
 Next, we will make something simple, but satisfying and motivating: the stars. Add the following block below `options`:
 
@@ -295,7 +295,7 @@ If you personally find them unnecessary, it is understandable and the opinion ha
 
 **Further reading**: [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html).
 
-### Step 01d: The initialising block
+### Step 014: The initialising block
 
 ----
 **Under the hood**: Like most game engines, CrispGameLib has an looping `update()`, running 60 times per second. The framerate is fixed and not changeable. This also mean that games made with CrispGameLib are entirely frame-rate dependent, omitting the need to handle `deltaTime` and instead, working with number of frames directly (if you have ever used Pico-8, you'd get the idea). You also get access to `ticks`, which provides you with the number of frames the game has passed.
@@ -334,9 +334,9 @@ function update() {
 
 There is quite a lot to be unpacked here, so take it slow. There are four things to take note of:
 * The function `vec(x, y)` to create a `Vector` object. This is defined by CrispGameLib.
-* The random number generator `rnd (min, max)`. Here it is used to generate a random position within the screen.
+* The random number generator `rnd (min, max)` (you should also be aware of its variant that returns a rounded integer `rndi (min, max)`). Here it is used to generate a random position within the screen.
 * I declared the temporary variables `posX` and `posY` as `const`, but did not capitalise them, because they are [scoped local variables](https://www.w3schools.com/js/js_scope.asp), in constrast to the global constant variable `G`.
-* The CrispGameLib built-in function `times( number, func())`. This might sound a bit confusing, but it is actually just a short hand for a `for loop`. The block can practically be re-written as:
+* The CrispGameLib built-in function `times( number, func())`. This might sound a bit confusing, but it is actually just a short hand for a `for loop`. **Alternatively**, the block can practically be re-written as:
 ```javascript
 function update() {
     if (!ticks) {
@@ -344,7 +344,7 @@ function update() {
             stars.push({
                 pos: vec(rnd(0, G.WIDTH), rnd(0, G.HEIGHT)),
                 speed: rnd(0.5, 1.0)
-            })
+            });
         }
     }
 }
@@ -366,7 +366,7 @@ const G = {
 
 However, this has no visible effect on the game yet.
 
-### Step 01e: The update loop
+### Step 015: The update loop
 
 We'll now be drawing the stars on screen. Add this block inside the `update()` block, just below the `if (!ticks) {}`:
 
@@ -388,8 +388,8 @@ We'll now be drawing the stars on screen. Add this block inside the `update()` b
 This block should look a lot less foreign, if you have ever seen videogame codes:
 * The method `Array.forEach()` iterates and execute on each element in the array. In this case, each `star` is updated 60 times a second. **Further reading**: [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach).
 * `s.pos.y += s.speed` adds the y coordinate of the star by `speed` (which we randomly generated when we created the stars), bringing the star perpetually downwards to the bottom of the screen.
-* `wrap(minX, maxX, minY, maxY)` is a method for `Vector`, which wrap the object back to the otherside, when the object is outside of the screen (which is specified by the screen coordinates as the four arguments). The handling of the x coordinate here is redundant as it never changes. This can be re-written more effectively as `if (s.pos.y > G.HEIGHT) s.pos.y = 0;`
-* The color is set before the star is drawn with `color()`. Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument.
+* `wrap(minX, maxX, minY, maxY)` is a method for `Vector`, which wrap the object back to the otherside, when the object is outside of the screen (which is specified by the screen coordinates as the four arguments). The handling of the x coordinate here is redundant as it never changes. **Alternatively,** this can be re-written more effectively as `if (s.pos.y > G.HEIGHT) s.pos.y = 0;`
+* The color is set before the star is drawn with `color()`. Here, the `box()` is chosen to represent the star, taking the star's coordinate as an argument. **Further reading**: [the drawing example in CrispGameLib](https://abagames.github.io/crisp-game-lib-games/?ref_drawing). Take note of the alternative use of `x` and `y` arguments as coordinates in opposed to a `Vector`.
 
 ----
 **For your experimentation**: Try changing:
@@ -407,6 +407,11 @@ Step 01 conclusion: [deployment]() / [code]() TODO
 
 ## Step 02: Input and control (player)
 
+### Step 021: Another type
+
+### Step 022: Input handling
+
+### Step 023: Custom sprite
 
 ## Step 03: Object control, creation, and removal (fBullets)
 
