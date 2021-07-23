@@ -15,14 +15,16 @@ Here's my attempt to change that. If you are into making videogames and looking 
 
 # Table of content
 
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
 * [About CrispGameLib](#about-crispgamelib)
 * [The goal](#the-goal)
 * [What you need](#what-you-need)
 * [How to read this tutorial](#how-to-read-this-tutorial)
 * [The tutorial](#the-tutorial)
 	* [Step 00: Setting up](#step-00-setting-up)
-		* [Getting the software](#getting-the-software)
-		* [Getting the library](#getting-the-library)
+		* [Step 001: Getting the software](#step-001-getting-the-software)
+		* [Step 002: Getting the library](#step-002-getting-the-library)
 		* [Setup the npm package](#setup-the-npm-package)
 	* [Step 01: Basic drawing and update (stars)](#step-01-basic-drawing-and-update-stars)
 	* [Step 02: Input and control (player)](#step-02-input-and-control-player)
@@ -101,7 +103,7 @@ Additionally, you'll also run into certain notations where I explain certain asp
 
 Naturally, this tutorial is highly opinionated and based on my personal experiences and understanding. You are highly encouraged to develop your own preferences and stick to them. I also highly welcome feedback and critiques; feel free to contact me in anyway you can regarding those.
 
-# The Tutorial
+# The tutorial
 
 This is where the fun begins and things start happening on your computer 😈.
 
@@ -1326,6 +1328,19 @@ Needless to say, the smaller the output, the faster it works. It should also be 
 
 # Game Distribution
 
+The most simple way to distribute your games made with CrispGameLib is using GitHub Page.
+
+There are many ways to do this. After registering a GitHub account, you may create a repository, either brand new or a fork of [CrispGameLib][cgl-url], which ever contains `index.html` and `bundle.js` found in the `docs` folder. Take the game source in the same folder with you, and by accessing the `index.html` with a parameter: `<address>/index.html?<game-folder-name>`.
+
+If you already have a forked repository of CrispGameLib:
+* Access the Settings/Pages for the forked repository.
+* Change Source folder to `/docs`.
+* Access the game at `https://<your-user-name>.github.io/<repository-name>/?<game-folder-name>`.
+
+# Community
+
+Feel free to post your work to reddit in our community on Reddit at [r/CrispGameLib](https://www.reddit.com/r/CrispGameLib/) or hashtag your Twitter post with #CrispGameLib.
+
 # Feedback and Critique
 
-# Credits
+Feedback, questions, suggestions, and contribution are highly welcomed. Feel free to reach me in anyway you can, though the most direct way would be opening an issue for this repository.
