@@ -90,4 +90,10 @@ function update() {
         // Draw the star as a square of size 1
         box(s.pos, 1);
     });
+
+    player.pos = vec(input.pos.x, input.pos.y);
+    player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
+
+    color("cyan");
+    box(player.pos, 4);
 }

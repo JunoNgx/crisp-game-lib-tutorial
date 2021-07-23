@@ -434,10 +434,41 @@ player = {
     pos: vec(G.WIDTH * 0.5, G.HEIGHT * 0.5)
 };
 ```
+Do take note of the use of game size variables `G.WIDTH` and `G.HEIGHT`, divided by half, to access the mid-position of the screen. We can now also start drawing the player:
 
-And we can even start drawing the player 
+```javascript
+    color("cyan");
+    box(player.pos, 4);
+```
+
+![Basic player](images/step_021.gif)
 
 ### Step 022: Input handling
+
+This is, however, still not interactive. We will start this by handling the `input`. By conventional standard, an entity's updates occur before drawing, so put this line before the drawing codes above.
+
+```javascript
+    player.pos = vec(input.pos.x, input.pos.y);
+```
+
+![Moving player](images/step_022.gif)
+
+Nice. The player now follows your mouse pointer.
+
+----
+**Further reading**: [The input example from the documention](https://abagames.github.io/crisp-game-lib-games/?ref_input). Besides the coordinate of the pointer, you also get access to three booleans `isPressed`, `isJustPressed`, `isJustReleased`, representing the three states of the button. While these will not be used in this tutorial, they are important. You can also do interesting and complicated input techniques with this, such as double tap/click, long press, or swiping.
+
+----
+
+However, we have one problem: the player occasionally moves out of the game screen, which is not ideal. We need to keep the player strictly within the screen at all times:
+
+```javascript
+    player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
+```
+
+![Clamped player's position](images/step_022b.gif)
+
+You will notice that `Vector.clamp(minX, maxX, minY, maxY)` is very similar to `wrap()`, it just has a slightly different outcome.
 
 ### Step 023: Custom sprite
 
