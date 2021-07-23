@@ -555,6 +555,223 @@ Step 02 conclusion: [deployment]() / [code]() TODO
 
 ## Step 03: Object control, creation, and removal (fBullets)
 
+We are finally going to fire our gun!
+### Step 031: Firing bullets
+
+First thing first, more stuff to declare. You should be quite familiar with this by now:
+
+```javascript
+const G = {
+	WIDTH: 100,
+	HEIGHT: 150,
+
+    STAR_SPEED_MIN: 0.5,
+	STAR_SPEED_MAX: 1.0,
+
+    PLAYER_FIRE_RATE: 4,
+    PLAYER_GUN_OFFSET: 3,
+
+    FBULLET_SPEED: 5
+};
+```
+
+```javascript
+/**
+ * @typedef {{
+ * pos: Vector,
+ * firingCooldown: number,
+ * isFiringLeft: boolean
+ * }} Player
+ */
+
+/**
+ * @type { Player }
+ */
+let player;
+
+/**
+ * @typedef {{
+ * pos: Vector
+ * }} FBullet
+ */
+
+/**
+ * @type { FBullet [] }
+ */
+let fBullets;
+```
+
+Do take note of the new properties added type `Player`: `firingCooldown` and `isFiringLeft`. If you have done your JSDoc properly, you would also notice that VSCode will start yelling at you, telling you that the `player` you initialised is incorrect and missing some properties (which is exactly what we expected). Other than fixing this, you should also start initalise `fBullets`, which is a short form of *friendly bullets*, to differentiate against *enemy bullets* we'd have later on.
+
+```javascript
+        player = {
+            pos: vec(G.WIDTH * 0.5, G.HEIGHT * 0.5),
+            firingCooldown: G.PLAYER_FIRE_RATE,
+            isFiringLeft: true
+        };
+
+        fBullets = [];
+```
+
+Next up, we update them per due process:
+```javascript
+    // Updating and drawing the player
+    player.pos = vec(input.pos.x, input.pos.y);
+    player.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
+    // Cooling down for the next shot
+    player.firingCooldown--;
+    // Time to fire the next shot
+    if (player.firingCooldown <= 0) {
+        // Create the bullet
+        fBullets.push({
+            pos: vec(player.pos.x, player.pos.y)
+        });
+        // Reset the firing cooldown
+        player.firingCooldown = G.PLAYER_FIRE_RATE;
+    }
+    color ("black");
+    char("a", player.pos);
+
+    // Updating and drawing bullets
+    fBullets.forEach((fb) => {
+        // Move the bullets upwards
+        fb.pos.y -= G.FBULLET_SPEED;
+        
+        // Drawing
+        color("yellow");
+        box(fb.pos, 2);
+    });
+```
+
+
+If you have played videogames before, you probably have heard of the concept "cooldown", with which, you need to wait for an interval time before you can use a powerful ability again. Though a machine gun is much faster, concept is similar, with a much shorter cooldown time, giving the feeling of bullets being constantly fired. 
+
+Here, the cooldown is set `firingCooldown: G.PLAYER_FIRE_RATE` in the initialisation; and in the update loop, it is perpetually reduced `player.firingCooldown--;` (this is a shorthard for `player.firingCooldown = player.firingCooldown - 1;` in case you are unfamiliar). By the time the cooldown is completed `(player.firingCooldown <= 0)`, a bullet is created, it is set back to the intial value of `G.PLAYER_FIRE_RATE`, and the process repeats. At the fire rate of `5` (frames), the ship is now firing 12 rounds per second.
+
+In the next block, `fBullets` iterates over its elements and perform the update and drawing on each of them not unlike `stars`.
+
+![Firing gun](images/step_031.gif)
+
+### Step 032: Object management and removal
+
+If you let the game run in the current state for a while, you will notice that it eventually slows down. This is because it is performing updates on hundreds, if not thousands of instances of bullets, which has gone out of screen and is heading towards infinity upwards. Try adding this, which will display the number of bullets existing in the game world:
+
+```javascript
+    text(fBullets.length.toString(), 3, 10);
+```
+
+![Lots of bullets](images/step_032.gif)
+
+This is quite horrendous. Of course those bullets are no longer relevant and we have to do something about them.
+
+```javascript
+    remove(fBullets, (fb) => {
+        return fb.pos.y < 0;
+    });
+```
+
+This is another weird looking function unique to CrispGameLib. Like `forEach()`, it iterates over elements in array, but then, it also checks for conditions to remove them from the container. In this case, `fb.pos.y < 0`. A bullet out of screen is a irrelevant bullet. Since our bullets only move in one direction, there is only one landmark to check against (the top of the screen). You can also use this function to update a group of objects, which I will show you later.
+
+But for now, the important thing is, there is only a few bullets on screen at a time, and the game is now much more resource-efficient.
+
+![Few bullets](images/step_032b.gif)
+
+### Step 033: Dual barrels
+
+If you have played the original game, you'd notice that this is not quite accurate, the ship is supposed to have two barrels, and bullets come out of them alternatively. We have actually already taken care part of that with `G.PLAYER_GUN_OFFSET` and `Player.isFiringLeft`. Now let's change the firing process:
+
+```javascript
+    if (player.firingCooldown <= 0) {
+        // Get the side from which the bullet is fired
+        const offset = (player.isFiringLeft)
+            ? -G.PLAYER_GUN_OFFSET
+            : G.PLAYER_GUN_OFFSET;
+        // Create the bullet
+        fBullets.push({
+            pos: vec(player.pos.x + offset, player.pos.y)
+        });
+        // Reset the firing cooldown
+        player.firingCooldown = G.PLAYER_FIRE_RATE;
+        // Switch the side of the firing gun by flipping the boolean value
+        player.isFiringLeft = !player.isFiringLeft;
+    }
+```
+
+----
+**Javascript feature** and **further reading**: [Conditional (ternary) operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator). The line `const offset = (player.isFiringLeft) ? -G.PLAYER_GUN_OFFSET : G.PLAYER_GUN_OFFSET;` is the short form of a conditional check:
+```javascript
+    let offset;
+    if (player.isFiringLeft) {
+        offset = -G.PLAYER_GUN_OFFSET;
+    } else {
+        offset = G.PLAYER_GUN_OFFSET;
+    }
+```
+Do get yourself familiar with it, this is a very useful shorthand.
+
+----
+
+![Dual barrel](images/step_033.gif)
+
+You may also now comment out the number of bullets lines.
+
+### Step 034: Muzzleflash and particles
+
+There is, however, one more thing I'd like to go over before before we're done with firing guns: we're going to put in some exiciting muzzleflash, which we will use particles to represent.
+
+```javascript
+    if (player.firingCooldown <= 0) {
+        // Get the side from which the bullet is fired
+        const offset = (player.isFiringLeft)
+            ? -G.PLAYER_GUN_OFFSET
+            : G.PLAYER_GUN_OFFSET;
+        // Create the bullet
+        fBullets.push({
+            pos: vec(player.pos.x + offset, player.pos.y)
+        });
+        // Reset the firing cooldown
+        player.firingCooldown = G.PLAYER_FIRE_RATE;
+        // Switch the side of the firing gun by flipping the boolean value
+        player.isFiringLeft = !player.isFiringLeft;
+
+        color("yellow");
+        // Generate particles
+        particle(
+            player.pos.x + offset, // x coordinate
+            player.pos.y, // y coordinate
+            4, // The number of particles
+            1, // The speed of the particles
+            -PI/2, // The emitting angle
+            PI/4  // The emitting width
+        );
+    }
+```
+
+![Particles](images/step_034.gif)
+
+**Further reading**: In order to best understand, here's a relevant excerpt from GameCrispLib documentation:
+
+```javascript
+function particle(
+  x: number,
+  y: number,
+  count?: number,
+  speed?: number,
+  angle?: number,
+  angleWidth?: number
+);
+function particle(
+  pos: VectorLike,
+  count?: number,
+  speed?: number,
+  angle?: number,
+  angleWidth?: number
+);
+```
+Do take note of my use of `PI` to achieve a 90 degree, and the alternative use of `Vector` instead of separated `x` and `y` coordinates, a recurring motif in GameCrispLib.
+
+Step 03 conclusion: [deployment]() / [code]() TODO
+
 ## Step 04: Mechanic control (enemies)
 
 
