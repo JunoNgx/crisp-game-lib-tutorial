@@ -984,6 +984,67 @@ This is a CrispGameLib quirk, while this does sound mind-boggling, it is not as 
 
 ## Step 06: How audio works
 
+### Step 061: The basic way
+
+And here's my favourite part of CrispGameLib. Let me just straight away show you an excerpt of the documentation ([not forgetting an example demo](https://abagames.github.io/crisp-game-lib-games/?ref_sound)):
+```javascript
+function update() {
+  // Plays a sound effect.
+  // play(type: "coin" | "laser" | "explosion" | "powerUp" |
+  // "hit" | "jump" | "select" | "lucky");
+  play("coin");
+}
+```
+It certainly doesn't look difficult. Let's add our own explosion sound:
+
+```javascript
+    remove(enemies, (e) => {
+        e.pos.y += currentEnemySpeed;
+        color("black");
+        const isCollidingWithFBullets = char("b", e.pos).isColliding.rect.yellow;
+        
+        if (isCollidingWithFBullets) {
+            color("yellow");
+            particle(e.pos);
+            play("explosion"); // Here!
+        }
+
+        return (isCollidingWithFBullets || e.pos.y > G.HEIGHT);
+    });
+```
+
+This is not something I can show you in gif, but if you did it right, you're having an explosion for every destroyed enemy.
+### Step 062: Infinite sound
+
+It gets even better. Let's add this to `options`.
+
+```javascript
+options = {
+    seed: 2
+}
+```
+
+It might not be obvious. But you are listening to a different explosion sound.
+
+To make it even more obvious, add `isPlayingBgm` to enable music:
+
+```javascript
+options = {
+    seed: 2,
+    isPlayingBgm: true
+}
+```
+
+It gets even crazier; let's add a game description:
+```javascript
+description = `
+Destroy enemies.
+`;
+```
+
+The bottom line is, CrispGameLib uses a combination of your assigned random `seed` and the content of your `description` to generate a particular sets of audio for your game. This means you are probably putting minimum work while still achieving a relatively unique audio experience for each game.
+
+Of course, without saying, it comes with a major downside. It means that you have pretty much almost no control at all over audio, and if you are looking to fine tune every single piece of audio, CrispGameLib can't give you that without some major modification to the engine.
 
 ## Step 07: More complex movements (eBullets)
 
