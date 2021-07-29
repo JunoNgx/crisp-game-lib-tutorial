@@ -1,4 +1,4 @@
-# Guide to getting start with CrispGameLib
+# Guide to getting started with CrispGameLib
 
 [cgl-url]: https://github.com/abagames/crisp-game-lib
 [aba-url]: https://github.com/abagames
