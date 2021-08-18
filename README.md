@@ -1218,6 +1218,24 @@ While this looks like quite a bit to comprehend, most of these are no longer new
 
 ![Firing enemy bullets](images/step_071.gif)
 
+----
+**Alternative implementation**: There is a less nerdy way implement the angled movement for eBullet with built-in utility methods:
+
+```javascript
+    remove(eBullets, (eb) => {
+        const velocityVector = vec(G.EBULLET_SPEED, 0).rorateTo(eb.angle);
+        eb.pos.add(velocityVector);
+    });
+```
+
+The variable `G.EBULLET_SPEED` represent the bullet's speed as a *scalar* (only magnitude, no direction). To represent this as a *vector*, it can be initialised as `vec(G.EBULLET_SPEED, 0)`. This vector has the indicated magnitude, pointing towards the 0 degree direction (visually on-screen, this is towards the right, hence the 0 value for `y`). Next up, `rotateTo(angle)` is a built-in method for the class `Vector`, which breaks down this magnitude appropriately to x and y component of a vector. Finally, we use the method `add()` to calculate the sum of two vectors, as `eb.pos.add(velocityVector)` will become the position of the bullet in the next frame, taking the velocity of this object into account.
+
+You will also find it useful to have a `vel` property in object types that might have varied movement speeds.
+
+This is not a "superior" or "better" way to do it, just a different implementation. Visually and mechanically, there is no difference. In any case, using `math.sin` and `math.cos` is a universal way to implement angled movement in all game engines and contexts. Which method you should use is a mere matter of personal preference.
+
+----
+
 At this point, it's fair that `enemies` are also able to destroy the `player`, too.
 
 ```javascript
