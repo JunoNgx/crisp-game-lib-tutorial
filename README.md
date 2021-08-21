@@ -691,7 +691,9 @@ This is quite horrendous. Of course those bullets are no longer relevant and we 
     });
 ```
 
-This is another weird looking function unique to CrispGameLib. Like `forEach()`, it iterates over elements in array, but then, it also checks for conditions to remove them from the container. In this case, `fb.pos.y < 0`. A bullet out of screen is a irrelevant bullet. Since our bullets only move in one direction, there is only one landmark to check against (the top of the screen). You can also use this function to update a group of objects, which I will show you later.
+This is another weird looking function unique to CrispGameLib. Like `forEach()`, it iterates over elements in array, but then, it also checks for conditions to remove them from the container. Think of it as a more intuitive and reversed version of the Javascript's native `Array.filter()`. It directly works on the array in the first parameters, and the elements that yield a `return true` in the second parameter (a function) are removed.
+
+In this case, a bullet out of screen is an irrelevant bullet, hence `fb.pos.y < 0`. Since our bullets only move in one direction, there is only one landmark to check against (the top of the screen). You can also use this function to update a group of objects, which I will show you later.
 
 But for now, the important thing is, there is only a few bullets on screen at a time, and the game is now much more resource-efficient.
 
