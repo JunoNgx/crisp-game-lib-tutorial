@@ -151,8 +151,8 @@ Once done, get a distributable version of CrispGameLib, and the simplest way to 
 Navigate to the directory where you'd like to work on with the terminal (alternatively, use your operating system's file explorer and opens the terminal there) and enter:
 
 ```
-	git clone git@github.com:JunoNgx/crips-game-lib-tutorial.git
-	cd crips-game-lib-tutorial
+	git clone git@github.com:JunoNgx/crisp-game-lib-tutorial.git
+	cd crisp-game-lib-tutorial
 ```
 
 The second command will navigate the terminal into the newly cloned repository folder.
