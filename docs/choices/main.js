@@ -1,6 +1,6 @@
 title = "choices";
 
-description = `Picky picky
+description = `picky picky
 `;
 
 characters = [
@@ -20,12 +20,15 @@ const G = {
 	DUST_SPEED : 0.1,
 	DUST_ROTATION_SPD: 0.1,
 
+	CURSOR_RCYCLE_TICKS: 20,
+	CURSOR_PLAYER_DISTANCE: 20,
+
 	PLAYER_SPEED: 1,
 	PLAYER_FIRERATE: 6,
 	PLAYER_KNOCKBACK: 4,
 	// charge
 	PLAYER_CHARGERATE: 1,
-	PLAYER_CHARGEMAX: 48.0,
+	PLAYER_CHARGEMAX: 190.0,
 
 	ENEMY_SPEED: 0.2,
 	ENEMY_BASEHEALTH: 1,
@@ -42,7 +45,7 @@ options = {
 	seed: 4,
 	isPlayingBgm: true,
 	isReplayEnabled: true,
-	theme: "shapeDark"
+	theme: "simple"
 };
 
 // DEFINITIONS
@@ -128,6 +131,8 @@ let gBullets;
 
 let wave_respawn_time = G.WAVE_RESPAWN_RATE;
 
+let cursorTime = 0;
+
 function update() {
 	if (!ticks) {
 		// create dust motes
@@ -165,31 +170,35 @@ function update() {
 		enemies = [];
 		gBullets = [];
 
-		wave_respawn_time = G.WAVE_RESPAWN_RATE;
+		wave_respawn_time = 0;
 	}
 	wave_respawn_time--;
-	if (enemies.length === 0) {
-		enemies = times(8, () => {
-			const posX = rnd(0, G.WIDTH);
-			const posY = rnd(0, G.HEIGHT);
-			return {
-				pos: vec(posX, posY),
-				size: rnd(1, 4),
-				color: "red",
-			}
-		});
-	}
 	if (wave_respawn_time <= 0) {
-		for (let i = 0; i < 5; i++) {
-			const posX = rnd(0, G.WIDTH);
-			const posY = rnd(0, G.HEIGHT);
-			enemies.push({
-				pos: vec(posX, posY),
-				size: rnd(1, 4),
-				color: "red",
+		if (enemies.length === 0) {
+			enemies = times(6, () => {
+				const posX = rnd(0, G.WIDTH);
+				const posY = rnd(0, G.HEIGHT);
+				return {
+					pos: vec(posX, posY),
+					size: rnd(1, 4),
+					color: "red",
+				}
 			});
+			wave_respawn_time = G.WAVE_RESPAWN_RATE;
 		}
-		wave_respawn_time = G.WAVE_RESPAWN_RATE;
+		else if (enemies.length < 6) {
+			for (let i = 0; i < 3; i++) {
+				const posX = rnd(0, G.WIDTH);
+				const posY = rnd(0, G.HEIGHT);
+				enemies.push({
+					pos: vec(posX, posY),
+					size: rnd(1, 4),
+					color: "red",
+				});
+			}
+			wave_respawn_time = G.WAVE_RESPAWN_RATE;
+		}
+	
 	}
 
 	// create dust
@@ -214,8 +223,12 @@ function update() {
 		color("black");
 		box(d.pos, 1);
 	});
-	// move cursor to mouse and draw
-	cursor.pos = vec(input.pos.x, input.pos.y);
+	// move cursor to circle rotation and draw
+	cursorTime = ticks / G.CURSOR_RCYCLE_TICKS;
+	text(cursorTime.toString(), 3, 9);
+	let xpos = G.CURSOR_PLAYER_DISTANCE * cos(cursorTime) + player.pos.x;
+	let ypos = G.CURSOR_PLAYER_DISTANCE * sin(cursorTime) + player.pos.y;
+	cursor.pos = vec(xpos, ypos);
 	cursor.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
 	color("black");
 	char("a", cursor.pos);
@@ -226,6 +239,10 @@ function update() {
 	}
 	// stop firing gun and dash when pressing
 	else {
+
+		if (player.isFiring == false) {
+			player_launch(player.pos.angleTo(cursor.pos));
+		}
 		player.isFiring = true;
 		if (player.charge > 0) { player.charge = 0 };
 	}
@@ -323,7 +340,6 @@ function update() {
 				(player.pos.x - e.pos.x)**2 
 				+ (player.pos.y - e.pos.y)**2));
 			let modifieD = Math.round((1/d) * 50); 
-			text(d.toString(), 3, 9);
 			// add score if hit / destroyed
 			e.size <= 0 
 			? addScore((10 * modifieD) * difficulty, e.pos) 
