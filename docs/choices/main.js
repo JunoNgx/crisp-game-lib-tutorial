@@ -10,6 +10,15 @@ characters = [
 ll ll
   l
   l
+`,
+
+`
+  lll
+ l   l
+ l   l
+ l   l
+  lll
+
 `
 ];
 
@@ -23,21 +32,48 @@ const G = {
 	CURSOR_RCYCLE_TICKS: 20,
 	CURSOR_PLAYER_DISTANCE: 20,
 
-	PLAYER_SPEED: 1,
-	PLAYER_FIRERATE: 6,
-	PLAYER_KNOCKBACK: 4,
-	// charge
-	PLAYER_CHARGERATE: 1,
-	PLAYER_CHARGEMAX: 190.0,
+	player: {
+		SPEED: 1,
+		FIRERATE: 6,
+		KNOCKBACK: 4,
+		// charge
+		CHARGE_RATE: 1,
+		CHARGE_MAX: 24,
+		// dash
+		DASH_LENGTH_MAX: 40,
+		DASH_COOLDOWN: 3,
+		DASH_LINETIME: 4,
+		// blocking
+		SHIELD_SIZE: 15,
+		SHIELD_DECREASE: 0.05,
+		SHIELD_INCREASE: 1,
+	},
 
 	ENEMY_SPEED: 0.2,
 	ENEMY_BASEHEALTH: 1,
 
 	WAVE_RESPAWN_RATE: 240,
 
-	GREEN_GUN_SPEED: 3,
-	GREEN_GUN_FIRERATE: 6,
-	GREEN_SPURT_DURATION: 12,
+	colors: {
+		green: {
+			SPEED: 3,
+			FIRERATE: 6,
+			PARTICLE_RATE: 12,
+			color: "green",
+		},
+		red: {
+			SPEED: 100,
+			FIRERATE: 24,
+			PARTICLE_RATE: 6,
+			color: "red",
+		},
+		yellow: {
+			SPEED: 1,
+			FIRERATE: 12,
+			PARTICLE_RATE: 2,
+			color: "yellow",
+		},
+	},
 }
 
 options = {
@@ -45,7 +81,7 @@ options = {
 	seed: 4,
 	isPlayingBgm: true,
 	isReplayEnabled: true,
-	theme: "simple"
+	theme: "simple",
 };
 
 // DEFINITIONS
@@ -68,6 +104,8 @@ let dust;
 /**
  * @typedef {{
  * pos: Vector
+ * target: Enemy,
+ * isTargeting: boolean,
  * }} Cursor
  */
 
@@ -82,6 +120,12 @@ let cursor;
  * firingCooldown: number,
  * isFiring: boolean,
  * charge: number,
+ * dashCooldown: number,
+ * drawLineTime: number,
+ * lineAngle: number,
+ * blocking: boolean,
+ * blockingSetUp: boolean,
+ * shieldSize: number,
  * }} Player
  */
 
@@ -152,16 +196,25 @@ function update() {
 				isRotatingLeft: true, // rotation direction
 			};
 		});
-		// create cursor
-		cursor = {
-			pos: vec(G.WIDTH / 2, G.HEIGHT / 2),
-		};
+
 		// create player
 		player = {
 			pos: vec(G.WIDTH / 2, G.HEIGHT / 2),
-			firingCooldown: G.PLAYER_FIRERATE,
+			firingCooldown: G.player.FIRERATE,
 			isFiring: true,
 			charge: 0,
+			dashCooldown: 0,
+			drawLineTime: 0,
+			lineAngle: 0,
+			blocking: false,
+			blockingSetUp: false,
+			shieldSize: G.player.SHIELD_SIZE,
+		};
+		// create cursor
+		cursor = {
+			pos: vec(G.WIDTH / 2, G.HEIGHT / 2),
+			target: null,
+			isTargeting: true,
 		};
 		// create UI reticle
 		uiReticle = {
@@ -180,7 +233,7 @@ function update() {
 				const posY = rnd(0, G.HEIGHT);
 				return {
 					pos: vec(posX, posY),
-					size: rnd(1, 4),
+					size: rnd(0.5, 2),
 					color: "red",
 				}
 			});
@@ -192,7 +245,7 @@ function update() {
 				const posY = rnd(0, G.HEIGHT);
 				enemies.push({
 					pos: vec(posX, posY),
-					size: rnd(1, 4),
+					size: rnd(0.5, 2),
 					color: "red",
 				});
 			}
@@ -223,61 +276,118 @@ function update() {
 		color("black");
 		box(d.pos, 1);
 	});
-	// move cursor to circle rotation and draw
-	cursorTime = ticks / G.CURSOR_RCYCLE_TICKS;
-	text(cursorTime.toString(), 3, 9);
-	let xpos = G.CURSOR_PLAYER_DISTANCE * cos(cursorTime) + player.pos.x;
-	let ypos = G.CURSOR_PLAYER_DISTANCE * sin(cursorTime) + player.pos.y;
-	cursor.pos = vec(xpos, ypos);
+
+	if (cursor.target == null && !cursor.isTargeting) {
+		enemies.length == 0
+		? cursor.target = null
+		: cursor.target = enemies[Math.floor(Math.random()*enemies.length)];	
+	}
+
+	if (cursor.isTargeting) {
+		// move cursor to circle rotation and draw
+		cursorTime = ticks / G.CURSOR_RCYCLE_TICKS;
+		// text(cursorTime.toString(), 3, 9);
+		let xpos = G.CURSOR_PLAYER_DISTANCE * cos(cursorTime) + player.pos.x;
+		let ypos = G.CURSOR_PLAYER_DISTANCE * sin(cursorTime) + player.pos.y;
+		cursor.pos = vec(xpos, ypos);
+	}
+	else {
+		cursor.pos = cursor.target.pos;
+	}
 	cursor.pos.clamp(0, G.WIDTH, 0, G.HEIGHT);
 	color("black");
-	char("a", cursor.pos);
+	// char("b", cursor.pos);
+	arc(cursor.pos, 4, 1);
 
-	// fire gun when not pressing anything
+	// fire gun when holding down for enough time
+	player.dashCooldown--;
 	if (input.isPressed) {
-		player.isFiring = false;
-	}
-	// stop firing gun and dash when pressing
-	else {
-
-		if (player.isFiring == false) {
-			player_launch(player.pos.angleTo(cursor.pos));
+		if (player.charge > G.player.CHARGE_MAX) {
+			cursor.isTargeting = true;
+			player.blocking = true;
+			console.log(player.blocking);
 		}
-		player.isFiring = true;
-		if (player.charge > 0) { player.charge = 0 };
+		else {
+			player.charge++;
+			player.blockingSetUp = false;
+		}
+	}
+	// dash when releasing
+	else if (input.isJustReleased) {
+		if (player.charge <= G.player.CHARGE_MAX && player.dashCooldown <= 0) {
+			// player_launch(player.pos.angleTo(cursor.pos));
+			player.lineAngle = player.pos.angleTo(cursor.pos);
+			play("jump");
+			addScore(1, player.pos);
+			// set draw time to not 0:
+			player.drawLineTime = G.player.DASH_LINETIME;
+			// particles!
+			color("green");
+			particle (
+				player.pos.x,
+				player.pos.y,
+				rnd(15, 21),
+				rnd(2.5, 3.5),
+				player.lineAngle,
+				PI/6,
+			);
+			// give player a new target
+			// cursor.target = null;
+			// move player to dash location
+			player.pos.x += G.player.DASH_LENGTH_MAX * Math.cos(player.lineAngle);
+			player.pos.y += G.player.DASH_LENGTH_MAX * Math.sin(player.lineAngle);
+		
+			player.dashCooldown = G.player.DASH_COOLDOWN;
+		}
+		player.isFiring = false;
+		player.charge = 0;
+		player.blocking = false;
+		cursor.isTargeting = false;
+		player.shieldSize = 0;
+	}
+	if (player.blocking) {		
+		if (!player.blockingSetUp) {
+			console.log("oooooooo");
+			player.shieldSize >= G.player.SHIELD_SIZE
+			? player.blockingSetUp = true
+			: player.shieldSize += G.player.SHIELD_INCREASE;
+		}
+		else {
+			console.log("AAAAAAAA");
+			player.shieldSize <= 0
+			? player.blocking = false
+			: player.shieldSize -= G.player.SHIELD_DECREASE;
+		}
+		color("red");
+		let radius = player.shieldSize / G.player.SHIELD_SIZE * 2.5;
+		arc(player.pos, player.shieldSize, radius);
+		cursor.target = null;
 	}
 	
-	player.firingCooldown--;
-	if (player.firingCooldown <= 0 && player.isFiring) {
-		// determine bullet angle
-		let fireAngle = player.pos.angleTo(cursor.pos);
-		// create green bullet
-		gBullets.push({
-			// properties
-			pos: vec(player.pos.x, player.pos.y),
-			angle: fireAngle,
-			spurtCooldown: G.GREEN_SPURT_DURATION,
-		});
-		// knock back player
-		let knockbackDir = vec(
-			G.PLAYER_KNOCKBACK * Math.cos(fireAngle),
-			G.PLAYER_KNOCKBACK * Math.sin(fireAngle)
-		);
-		// nevermind do it again
-		player.pos.x -= knockbackDir.x;
-		player.pos.y -= knockbackDir.y;
-		// play fire sound effect
-		play("hit");
-		// reset firing cooldw=own
-		player.firingCooldown = G.PLAYER_FIRERATE;
-	}
-	else if (!player.isFiring) {
-		// if player is not shooting, charge up dash
-		player.charge >= G.PLAYER_CHARGEMAX
-		? player_launch(player.pos.angleTo(cursor.pos))
-		: player.charge += G.PLAYER_CHARGERATE;
-
-	}
+	// player.firingCooldown--;
+	// if (player.firingCooldown <= 0 && player.isFiring) {
+	// 	// determine bullet angle
+	// 	let fireAngle = player.pos.angleTo(cursor.pos);
+	// 	// create green bullet
+	// 	gBullets.push({
+	// 		// properties
+	// 		pos: vec(player.pos.x, player.pos.y),
+	// 		angle: fireAngle,
+	// 		spurtCooldown: G.colors.green.PARTICLE_RATE,
+	// 	});
+	// 	// knock back player
+	// 	let knockbackDir = vec(
+	// 		G.player.KNOCKBACK * Math.cos(fireAngle),
+	// 		G.player.KNOCKBACK * Math.sin(fireAngle)
+	// 	);
+	// 	// nevermind do it again
+	// 	player.pos.x -= knockbackDir.x;
+	// 	player.pos.y -= knockbackDir.y;
+	// 	// play fire sound effect
+	// 	play("hit");
+	// 	// reset firing cooldw=own
+	// 	player.firingCooldown = G.player.FIRERATE;
+	// }
 	// make sure player raps 
 	player.pos.wrap(0, G.WIDTH, 0, G.HEIGHT);
 	// drawing
@@ -289,12 +399,21 @@ function update() {
 
 	color("black");
 	box(uiReticle.pos, 2);
+	if (player.drawLineTime > 0) {
+		// summon a quick line from player to dash location
+		color("green");
+		line(player.pos.x, player.pos.y, 
+			player.pos.x - G.player.DASH_LENGTH_MAX*Math.cos(player.lineAngle), 
+			player.pos.y - G.player.DASH_LENGTH_MAX*Math.sin(player.lineAngle),
+			2);
+		player.drawLineTime--;
+	}
 
 	// define enemies
 	gBullets.forEach((gb) => {
 		// move bullets on trajectory
-		gb.pos.x += G.GREEN_GUN_SPEED * Math.cos(gb.angle);
-		gb.pos.y += G.GREEN_GUN_SPEED * Math.sin(gb.angle);
+		gb.pos.x += G.colors.green.SPEED * Math.cos(gb.angle);
+		gb.pos.y += G.colors.green.SPEED * Math.sin(gb.angle);
 
 		color("green");
 		// add some particles every once in a while to spice things up
@@ -308,7 +427,7 @@ function update() {
 				gb.angle,
 				PI/6
 			)
-			gb.spurtCooldown = G.GREEN_SPURT_DURATION;
+			gb.spurtCooldown = G.colors.green.PARTICLE_RATE;
 		}
 		// draw
 		box(gb.pos, 2);
@@ -326,10 +445,16 @@ function update() {
 		// box(e.pos, e.size + 2);
 		// check if colliding with green bullets
 		const isCollidingWithGreen = 
-		box(e.pos, e.size + 2).isColliding.rect.green;
+		(char("b", e.pos, {scale: {x : (e.size), 
+			y : (e.size)}})).isColliding.rect.green;
 		// check if colliding with player
 		const isCollidingWithPlayer =
-		box(e.pos, e.size + 2).isColliding.rect.yellow;
+		(char("b", e.pos, {scale: {x : (e.size), 
+			y : (e.size)}})).isColliding.rect.yellow;
+		// check if colliding with shield
+		const isCollidingWithShield = 
+		(char("b", e.pos, {scale: {x : (e.size), 
+			y : (e.size)}})).isColliding.rect.red;
 
 		// take damage from green bullets
 		if (isCollidingWithGreen) {
@@ -341,15 +466,25 @@ function update() {
 				+ (player.pos.y - e.pos.y)**2));
 			let modifieD = Math.round((1/d) * 50); 
 			// add score if hit / destroyed
-			e.size <= 0 
-			? addScore((10 * modifieD) * difficulty, e.pos) 
-			: addScore(1 * modifieD, e.pos);
+
+			if (e.size <= 0) {
+				addScore((10 * modifieD) * difficulty, e.pos);
+				cursor.target = null;
+			}
+			else {
+				addScore(1 * modifieD, e.pos);
+			}
 			play("explosion");
 		}
 		// end game if collide with player
 		if (isCollidingWithPlayer) {
 			end(); // end game
 			play("lucky"); // play sound effect
+		}
+
+		if (isCollidingWithShield) {
+			e.pos.x -= (G.ENEMY_SPEED * 3) * Math.cos(e.pos.angleTo(player.pos)) * difficulty;
+			e.pos.y -= (G.ENEMY_SPEED * 3) * Math.sin(e.pos.angleTo(player.pos)) * difficulty;	
 		}
 
 		return (e.size <= 0);
@@ -359,11 +494,8 @@ function update() {
 		color("green");
 		// check for collision with enemies
 		const isCollidingWithEnemies =
-		box(gb.pos, 2).isColliding.rect.red;
+		box(gb.pos, 2).isColliding.char.b;
 
-		if (isCollidingWithEnemies) {
-
-		}
 		// destroy if colliding with enemies or outside bounds
 		return (!gb.pos.isInRect(0, 0, G.WIDTH, G.HEIGHT));
 	})
@@ -391,8 +523,6 @@ function player_launch(angle) {
 		PI/6,
 	)
 	// move player to dash location
-	player.pos.x += player.charge * Math.cos(angle);
-	player.pos.y += player.charge * Math.sin(angle);
-	// reset dash charge
-	player.charge = 0;
+	player.pos.x += G.player.DASH_LENGTH_MAX * Math.cos(angle);
+	player.pos.y += G.player.DASH_LENGTH_MAX * Math.sin(angle);
 }
